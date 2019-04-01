@@ -53,47 +53,21 @@ console.log("TESTING ALTERATIONS");
  *
  ********************/
 
-
-var FlankerExperiment = function() {
-  var instructionText = "Fixe o olhar no centro da tela. Você verá um grupo de setas."+
-    "\nPreste atenção na seta do centro e ignore as outras. \n\n" +
-    "Usando a sua mão direita, pressione &larr; "+
-    "(esquerda) sempre que a seta central apontar para a ESQUERDA e \n"+
-    "&rarr; (direita) quando apontar para a DIREITA.\n\n"+
-    "Responda o mais rápido e corretamente possível.\n\n" +
-    "Pressione &larr; ou &rarr; para iniciar.";
-  var pauseText =
-    "Descanse um pouco.\n" +
-    "Quando estiver pronto, pressione &larr; (seta para a esquerda)\n" +
-    "Ou &rarr; (seta para a direita) para continuar";
-  var longPauseText = 
-    "O experientador vai abrir uma porta da cabine agora. Descanse durante esse tempo.\n\n"+
-    "Pressione &larr; (seta para a esquerda)\n"+
-    "Ou &rarr; (seta para a direita) para continuar";
-  var practiceEndText = 
-    "Você terminou a prática. Pressione qualquer tecla para encerrar."+
-    "Em seguida, aguarde até que o experimentador abra a porta da cabine.";
-  var endText = "Obrigado pela sua participação!\n\nPressione qualquer tecla para encerrar.";
-  var lowAccText = "Tente ser mais correto nas suas respostas.";
-  var highAccText = "Tente responder mais rápido.";
-  var midAccText = "Você está indo muito bem!";
-
-  // var arrowDurS = 0.2;       // time target arrow is onscreen (in seconds)
+/**
+ * 
+ * @param {Number} nTrials 
+ * @param {Object} additionalData
+ * @param {Function} callback
+ */
+var runFlankerBlock = function(nTrials, additionalData, callback) {
   var arrowDurS = 0.2;
   var ITIMinS = 1.4;
   var ITIMaxS = 1.6;
   
-  var ITIrandS = boundedRandomFloat(ITIMinS, ITIMaxS);
-
-  var isPractice = true;
-  var nBlocks = isPractice ? 1 : 2;
-  var nTrialsPerBlock = isPractice ? 20 : 2;
-
-  var nCoherentTrials = parseInt(nTrialsPerBlock / 2);
-  var nIncoherentTrials = parseInt(nTrialsPerBlock / 2);
-
-  console.log("LODASH IS", _);
-
+  var nCoherentTrials = parseInt(nTrials / 2);
+  var nIncoherentTrials = parseInt(nTrials / 2);
+  
+  
   var trialDir = [];
   for (var i = 0; i < nCoherentTrials + nIncoherentTrials; i++) {
     var dir = _.random(0, 1);
@@ -103,9 +77,7 @@ var FlankerExperiment = function() {
     });
   }
   trialDir = _.shuffle(trialDir);
-
-  psiTurk.showPage('flankerStage.html');
-
+  
   var listener = DelayedInput(); // utils.js
   var trialData = [];
 
@@ -140,17 +112,71 @@ var FlankerExperiment = function() {
           }
 
           trialData.push({
-            Condition: coherent,
-            TargetDirection: dir.target,
+            ...additionalData, // TODO make this ES5 compatible
+            Condition: String(coherent),
+            TargetDirection: String(dir.target),
+            FlankerDirection: String(dir.flanker),
+            RT: String(input.delay / 1000),
+            Correct: (
+              input.keyCode === LEFT_KEY_CODE  && dir.target === 0 ||
+              input.keyCode === RIGHT_KEY_CODE && dir.target === 1
+            )
           });
 
           execTrial();
-        }, ITIrandS * 1000);
+        }, boundedRandomFloat(ITIMinS, ITIMaxS) * 1000);
       }, arrowDurS * 1000);
+    } else {
+      console.log('TRIAL DATA IS', trialData);
+      callback(trialData);
     }
   }
 
   execTrial();
+}  
+
+var FlankerExperiment = function(isPractice) {
+
+  var instructionText = "Fixe o olhar no centro da tela. Você verá um grupo de setas."+
+    "\nPreste atenção na seta do centro e ignore as outras. \n\n" +
+    "Usando a sua mão direita, pressione &larr; "+
+    "(esquerda) sempre que a seta central apontar para a ESQUERDA e \n"+
+    "&rarr; (direita) quando apontar para a DIREITA.\n\n"+
+    "Responda o mais rápido e corretamente possível.\n\n" +
+    "Pressione &larr; ou &rarr; para iniciar.";
+  var pauseText =  
+    "Descanse um pouco.\n" +
+    "Quando estiver pronto, pressione &larr; (seta para a esquerda)\n" +
+    "Ou &rarr; (seta para a direita) para continuar";
+  var longPauseText =   
+    "O experientador vai abrir uma porta da cabine agora. Descanse durante esse tempo.\n\n"+
+    "Pressione &larr; (seta para a esquerda)\n"+
+    "Ou &rarr; (seta para a direita) para continuar";
+  var practiceEndText =   
+    "Você terminou a prática. Pressione qualquer tecla para encerrar."+
+    "Em seguida, aguarde até que o experimentador abra a porta da cabine.";
+  var endText = "Obrigado pela sua participação!\n\nPressione qualquer tecla para encerrar.";  
+  var lowAccText = "Tente ser mais correto nas suas respostas.";
+  var highAccText = "Tente responder mais rápido.";
+  var midAccText = "Você está indo muito bem!";
+
+  // var arrowDurS = 0.2;       // time target arrow is onscreen (in seconds)
+
+  console.log("LODASH IS", _);
+  psiTurk.showPage('flankerStage.html');
+
+
+  // First run a practice session
+  runFlankerBlock(20, {Session: 0, Block: 0}, function(data1) {
+    console.log("ran first block!!!");
+    runFlankerBlock(2, {Session: 1, Block: 0}, function(data2) {
+      console.log("ran second block!!!");
+      runFlankerBlock(2, {Session: 1, Block: 1}, function(data3) {
+        
+      });
+    });
+  });
+
 };
 
 /********************
