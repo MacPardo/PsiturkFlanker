@@ -6,9 +6,6 @@
 
 // Initalize psiturk object
 
-var LEFT_KEY_CODE  = 37;
-var RIGHT_KEY_CODE = 39;
-
 var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 var mycondition = condition; // these two variables are passed by the psiturk server process
@@ -90,6 +87,8 @@ var FlankerExperiment = function() {
   var ITIMaxS = 1.6;
   var ITIMax = parseInt(Math.round(ITIMaxS/frameLength));
 
+  var ITIrandS = boundedRandomFloat(ITIMinS, ITIMaxS);
+
   var isPractice = true;
   var nBlocks = isPractice ? 1 : 2;
   var nTrialsPerBlock = isPractice ? 20 : 2;
@@ -123,28 +122,7 @@ var FlankerExperiment = function() {
 
   psiTurk.showPage('flankerStage.html');
 
-  var waitingForKeyPress = false;
-  var lastKeyCode = undefined;
-  var lastKeyTime = undefined;
-  window.addEventListener('keydown', function(event) {
-    console.log('keypress event is', event);
-    if (waitingForKeyPress) {
-      waitingForKeyPress = false;
-      lastKeyCode = event.keyCode;
-      lastKeyTime = Math.floor(Date.now());
-      console.log('key data', lastKeyCode, lastKeyTime);
-    }
-  });
-  function getLastKeyCode() {
-    var keyCode = lastKeyCode;
-    lastKeyCode = undefined;
-    return keyCode;
-  }
-  function getInputDelay(startTime) {
-    var keyTime = lastKeyTime;
-    lastKeyTime = undefined;
-    return keyTime - startTime;
-  }
+  var listener = DelayedInput(); // utils.js
 
   function execTrial() {
     if (trialDir.length > 0) {
@@ -155,19 +133,16 @@ var FlankerExperiment = function() {
 
       $("#stim").html(divHTML);
       waitingForKeyPress = true;
-      var startTime = Math.floor(Date.now());
+      listener.listen();
 
       setTimeout(function() {
         $("#stim").html("");
-
-        var keyCode = getLastKeyCode();
-        var inputDelay = getInputDelay(startTime);
-        console.log("last key code is", keyCode);
-        console.log("input delay is", inputDelay);
-
+        
         setTimeout(function() {
+          var input = listener.result();
+          console.log("input result:", input);
           execTrial();
-        }, ITIMaxS * 1000);
+        }, ITIrandS * 1000);
       }, arrowDurS * 1000);
     }
   }
