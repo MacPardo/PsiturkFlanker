@@ -79,6 +79,14 @@ function dirPairToStr(dir) {
     secondaryChar;
 }
 
+function promiseTimeout(delay) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      resolve();
+    }, delay);
+  });
+}
+
 var ACCURACY_LOW    = 0.75;
 var ACCURACY_MEDIUM = 0.90;
 
