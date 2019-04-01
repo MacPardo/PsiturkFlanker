@@ -8,12 +8,16 @@
 
 var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 
+
+console.log('GLOBAL INFORMATION::::');
+console.log('uniqueId', uniqueId);
+console.log('adServerLoc', adServerLoc);
+console.log('mode', mode);
+
+
 var mycondition = condition; // these two variables are passed by the psiturk server process
 var mycounterbalance = counterbalance; // they tell you which condition you have been assigned to
 // they are not used in the stroop code but may be useful to you
-
-console.log("condition", condition);
-console.log("counterbalance", counterbalance);
 
 // All pages to be loaded
 var pages = [
@@ -133,7 +137,7 @@ var runFlankerBlock = function(nTrials, additionalData, callback) {
   }
 
   execTrial();
-}  
+}
 
 var FlankerExperiment = function(isPractice) {
 
@@ -160,9 +164,9 @@ var FlankerExperiment = function(isPractice) {
   var highAccText = "Tente responder mais rápido.";
   var midAccText = "Você está indo muito bem!";
 
-  // var arrowDurS = 0.2;       // time target arrow is onscreen (in seconds)
-
   psiTurk.showPage('flankerStage.html');
+
+  psiTurk.recordUnstructuredData('ExperimentStartTime', (new Date()).toUTCString());
 
 
   // First run a practice session
@@ -172,7 +176,7 @@ var FlankerExperiment = function(isPractice) {
     if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
       $("#query").html("");
       window.removeEventListener("keydown", startFlanker);
-      runFlankerBlock(20, {Session: 0, Block: 0}, function(data1, accuracy1) {
+      runFlankerBlock(2, {Session: 0, Block: 0}, function(data1, accuracy1) {
         console.log("ran first block!!!");
         runFlankerBlock(2, {Session: 1, Block: 0}, function(data2, accuracy2) {
           console.log("ran second block!!!");
@@ -180,6 +184,15 @@ var FlankerExperiment = function(isPractice) {
             console.log("results 1", data1, accuracy1);
             console.log("results 2", data2, accuracy2);
             console.log("results 3", data3, accuracy3);
+
+            psiTurk.recordUnstructuredData('ExperimentFinishTime', (new Date()).toUTCString());
+            psiTurk.recordTrialData(data1);
+            psiTurk.recordTrialData(data2);
+            psiTurk.recordTrialData(data3);
+            psiTurk.saveData(function(test) {
+              console.log("testing save data callback", test);
+            });
+            console.log("called save data");
           });
         });
       });
