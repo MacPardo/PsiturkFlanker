@@ -69,8 +69,8 @@ function DelayedInput() {
 }
 
 function dirPairToStr(dir) {
-  var mainChar      = dir.center === 0 ? '<' : '>';
-  var secondaryChar = dir.others === 0 ? '<' : '>';
+  var mainChar      = dir.target === 0 ? '<' : '>';
+  var secondaryChar = dir.flanker === 0 ? '<' : '>';
 
   return secondaryChar +
     secondaryChar +

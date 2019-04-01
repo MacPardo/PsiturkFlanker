@@ -98,8 +98,8 @@ var FlankerExperiment = function() {
   for (var i = 0; i < nCoherentTrials + nIncoherentTrials; i++) {
     var dir = _.random(0, 1);
     trialDir.push({
-      center: dir,
-      others: i >= nCoherentTrials ? dir : Math.abs(dir - 1)
+      target: dir,
+      flanker: i >= nCoherentTrials ? dir : Math.abs(dir - 1)
     });
   }
   trialDir = _.shuffle(trialDir);
@@ -107,6 +107,7 @@ var FlankerExperiment = function() {
   psiTurk.showPage('flankerStage.html');
 
   var listener = DelayedInput(); // utils.js
+  var trialData = [];
 
   function execTrial() {
     if (trialDir.length > 0) {
@@ -126,15 +127,22 @@ var FlankerExperiment = function() {
           var input = listener.result();
           console.log("input result:", input);
 
+          var coherent = dir.target === dir.flanker;
+          
           console.log('dir:', dir);
           if (
-            input.keyCode === LEFT_KEY_CODE  && dir.center === 0 ||
-            input.keyCode === RIGHT_KEY_CODE && dir.center === 1
+            input.keyCode === LEFT_KEY_CODE  && dir.target === 0 ||
+            input.keyCode === RIGHT_KEY_CODE && dir.target === 1
           ) {
             console.log('ACERTOU');
           } else {
             console.log('ERROU');
           }
+
+          trialData.push({
+            Condition: coherent,
+            TargetDirection: dir.target,
+          });
 
           execTrial();
         }, ITIrandS * 1000);
