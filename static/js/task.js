@@ -78,45 +78,29 @@ var FlankerExperiment = function() {
   var highAccText = "Tente responder mais rápido.";
   var midAccText = "Você está indo muito bem!";
 
-  var frameRate = 60; // win.getActualFrameRate()
-  var frameLength = 1.0/frameRate;
-  var arrowDurS = 0.2;       // time target arrow is onscreen (in seconds)
-  var arrowDur = parseInt(Math.round(arrowDurS/frameLength));
+  // var arrowDurS = 0.2;       // time target arrow is onscreen (in seconds)
+  var arrowDurS = 0.2;
   var ITIMinS = 1.4;
-  var ITIMin = parseInt(Math.round(ITIMinS/frameLength));
   var ITIMaxS = 1.6;
-  var ITIMax = parseInt(Math.round(ITIMaxS/frameLength));
-
+  
   var ITIrandS = boundedRandomFloat(ITIMinS, ITIMaxS);
 
   var isPractice = true;
   var nBlocks = isPractice ? 1 : 2;
   var nTrialsPerBlock = isPractice ? 20 : 2;
 
-  var nCoherentTrials = nTrialsPerBlock / 2;
-  var nIncoherentTrials = nTrialsPerBlock / 2;
+  var nCoherentTrials = parseInt(nTrialsPerBlock / 2);
+  var nIncoherentTrials = parseInt(nTrialsPerBlock / 2);
 
   console.log("LODASH IS", _);
 
-  function dirPairToStr(dir) {
-    var mainChar = dir[0] ? '<' : '>';
-    var secondaryChar = dir[1] ? '<' : '>';
-
-    return secondaryChar +
-      secondaryChar +
-      mainChar + 
-      secondaryChar + 
-      secondaryChar;
-  }
-
   var trialDir = [];
-  for (var i = 0; i < nCoherentTrials; i++) {
+  for (var i = 0; i < nCoherentTrials + nIncoherentTrials; i++) {
     var dir = _.random(0, 1);
-    trialDir.push([dir, dir]);
-  }
-  for (var i = 0; i < nIncoherentTrials; i++) {
-    var dir = _.random(0, 1);
-    trialDir.push([dir, Math.abs(dir - 1)]);
+    trialDir.push({
+      center: dir,
+      others: i >= nCoherentTrials ? dir : Math.abs(dir - 1)
+    });
   }
   trialDir = _.shuffle(trialDir);
 
@@ -141,11 +125,23 @@ var FlankerExperiment = function() {
         setTimeout(function() {
           var input = listener.result();
           console.log("input result:", input);
+
+          console.log('dir:', dir);
+          if (
+            input.keyCode === LEFT_KEY_CODE  && dir.center === 0 ||
+            input.keyCode === RIGHT_KEY_CODE && dir.center === 1
+          ) {
+            console.log('ACERTOU');
+          } else {
+            console.log('ERROU');
+          }
+
           execTrial();
         }, ITIrandS * 1000);
       }, arrowDurS * 1000);
     }
   }
+
   execTrial();
 };
 

@@ -67,3 +67,14 @@ function DelayedInput() {
 
   return self;
 }
+
+function dirPairToStr(dir) {
+  var mainChar      = dir.center === 0 ? '<' : '>';
+  var secondaryChar = dir.others === 0 ? '<' : '>';
+
+  return secondaryChar +
+    secondaryChar +
+    mainChar + 
+    secondaryChar + 
+    secondaryChar;
+}
