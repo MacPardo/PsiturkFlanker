@@ -41,8 +41,6 @@ var flankerInstructionPages = [
   "flankerInstructions/instruct-1.html"
 ];
 
-console.log("TESTING ALTERATIONS");
-
 /********************
  * HTML manipulation
  *
@@ -81,6 +79,7 @@ var runFlankerBlock = function(nTrials, additionalData, callback) {
   var listener = DelayedInput(); // utils.js
   var trialData = [];
 
+  var correctHits = 0;
   function execTrial() {
     if (trialDir.length > 0) {
 
@@ -107,6 +106,7 @@ var runFlankerBlock = function(nTrials, additionalData, callback) {
             input.keyCode === RIGHT_KEY_CODE && dir.target === 1
           ) {
             console.log('ACERTOU');
+            correctHits++;
           } else {
             console.log('ERROU');
           }
@@ -128,7 +128,7 @@ var runFlankerBlock = function(nTrials, additionalData, callback) {
       }, arrowDurS * 1000);
     } else {
       console.log('TRIAL DATA IS', trialData);
-      callback(trialData);
+      callback(trialData, correctHits/nTrials);
     }
   }
 
@@ -138,11 +138,11 @@ var runFlankerBlock = function(nTrials, additionalData, callback) {
 var FlankerExperiment = function(isPractice) {
 
   var instructionText = "Fixe o olhar no centro da tela. Você verá um grupo de setas."+
-    "\nPreste atenção na seta do centro e ignore as outras. \n\n" +
+    "<br>Preste atenção na seta do centro e ignore as outras.<br><br>" +
     "Usando a sua mão direita, pressione &larr; "+
-    "(esquerda) sempre que a seta central apontar para a ESQUERDA e \n"+
-    "&rarr; (direita) quando apontar para a DIREITA.\n\n"+
-    "Responda o mais rápido e corretamente possível.\n\n" +
+    "(esquerda) sempre que a seta central apontar para a ESQUERDA e <br>"+
+    "&rarr; (direita) quando apontar para a DIREITA.<br><br>"+
+    "Responda o mais rápido e corretamente possível.<br><br>" +
     "Pressione &larr; ou &rarr; para iniciar.";
   var pauseText =  
     "Descanse um pouco.\n" +
@@ -162,21 +162,30 @@ var FlankerExperiment = function(isPractice) {
 
   // var arrowDurS = 0.2;       // time target arrow is onscreen (in seconds)
 
-  console.log("LODASH IS", _);
   psiTurk.showPage('flankerStage.html');
 
 
   // First run a practice session
-  runFlankerBlock(20, {Session: 0, Block: 0}, function(data1) {
-    console.log("ran first block!!!");
-    runFlankerBlock(2, {Session: 1, Block: 0}, function(data2) {
-      console.log("ran second block!!!");
-      runFlankerBlock(2, {Session: 1, Block: 1}, function(data3) {
-        
+  $("#query").html(instructionText);
+  function startFlanker(event) {
+    console.log("start flanker!!!!!!", event);
+    if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
+      $("#query").html("");
+      window.removeEventListener("keydown", startFlanker);
+      runFlankerBlock(20, {Session: 0, Block: 0}, function(data1, accuracy1) {
+        console.log("ran first block!!!");
+        runFlankerBlock(2, {Session: 1, Block: 0}, function(data2, accuracy2) {
+          console.log("ran second block!!!");
+          runFlankerBlock(2, {Session: 1, Block: 1}, function(data3, accuracy3) {
+            console.log("results 1", data1, accuracy1);
+            console.log("results 2", data2, accuracy2);
+            console.log("results 3", data3, accuracy3);
+          });
+        });
       });
-    });
-  });
-
+    }
+  }
+  window.addEventListener('keydown', startFlanker);
 };
 
 /********************

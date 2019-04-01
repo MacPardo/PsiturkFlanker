@@ -78,3 +78,9 @@ function dirPairToStr(dir) {
     secondaryChar + 
     secondaryChar;
 }
+
+var ACCURACY_LOW    = 0.75;
+var ACCURACY_MEDIUM = 0.90;
+
+var SESSION_PRACTICE = "Practice";
+var SESSION_TEST     = "Test";
