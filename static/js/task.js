@@ -8,6 +8,7 @@
 
 var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 
+console.log("My unique id is", uniqueId);
 
 console.log('GLOBAL INFORMATION::::');
 console.log('uniqueId', uniqueId);
@@ -61,7 +62,7 @@ var flankerInstructionPages = [
  * @param {Object} additionalData
  * @param {Function} callback
  */
-var runFlankerBlock = function(nTrials, additionalData, callback) {
+var runFlankerBlock = function(nTrials, additionalData) {
   var arrowDurS = 0.2;
   var ITIMinS = 1.4;
   var ITIMaxS = 1.6;
@@ -128,7 +129,6 @@ var runFlankerBlock = function(nTrials, additionalData, callback) {
               input.keyCode === RIGHT_KEY_CODE && dir.target === 1
             )
           });
-  
           execTrial();
         });
       } else {
@@ -162,7 +162,11 @@ var FlankerExperiment = function(isPractice) {
   var practiceEndText =   
     "Você terminou a prática. Pressione qualquer tecla para encerrar."+
     "Em seguida, aguarde até que o experimentador abra a porta da cabine.";
-  var endText = "Obrigado pela sua participação!<br><br>Pressione qualquer tecla para encerrar.";  
+  var endText = "Obrigado pela sua participação!<br><br>"+
+    "Por favor, não feche a janela até que as informações do teste sejam salvas.<br>"+
+    "Salvando...";
+  var savedText = "Obrigado pela sua participação!<br><br>"+
+    "Dados salvos! A janela já pode ser fechada";
   var lowAccText = "Tente ser mais correto nas suas respostas.";
   var highAccText = "Tente responder mais rápido.";
   var midAccText = "Você está indo muito bem!";
@@ -171,21 +175,35 @@ var FlankerExperiment = function(isPractice) {
 
   // psiTurk.recordUnstructuredData('ExperimentStartTime', (new Date()).toUTCString());
   var experimentStartTime = (new Date()).toUTCString();
+  var experimentData = [];
 
   // First run a practice session
   $("#query").html(instructionText);
   function startFlanker(event) {
     console.log("start flanker!!!!!!", event);
     if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
-      $("#query").html("");
       window.removeEventListener("keydown", startFlanker);
-
-      runFlankerBlock(2, {Session: 0, Block: 0}).then(function(data1) {
+      
+      $("#query").html(
+        "Primeiro você irá treinar um pouco<br>"+
+        "Após o treino o teste irá iniciar realmente"
+      );
+      promiseTimeout(2000).then(function() {
+        $("#query").html("");
+        return promiseTimeout(1000);
+      }).then(function() {
+        return runFlankerBlock(20, {Session: 0, Block: 0, Date: (new Date()).toUTCString()});
+      }).then(function() {
+        $("#query").html("Agora o teste irá começar de verdade");
+        return promiseTimeout(2000);
+      }).then(function(data1) {
+        $("#query").html("");
+        experimentData.push(data1);
         console.log("rodou primerio bloco", data1);
-        return runFlankerBlock(2, {Session: 0, Block: 1});
+        return runFlankerBlock(2, {Session: 0, Block: 1, Date: (new Date()).toUTCString()});
       }).then(function(data2) {
         console.log("rodou o segundo bloco", data2);
-
+        experimentData.push(data2);
         if (data2.accuracy <= ACCURACY_LOW) {
           $("#query").html(lowAccText);
         } else if (data2.accuracy <= ACCURACY_MEDIUM) {
@@ -196,13 +214,26 @@ var FlankerExperiment = function(isPractice) {
         return promiseTimeout(2000);
       }).then(function() {
         $("#query").html("");
-        return runFlankerBlock(2, {Session: 1, Block: 0});
+        return runFlankerBlock(2, {Session: 1, Block: 0, Date: (new Date()).toUTCString()});
       }).then(function(data3) {
-        console.log("rodou o terceiro bloco", data3);
+        experimentData.push(data3);
         $("#query").html(endText);
+        
+        console.log("rodou o terceiro bloco", data3);
+        
+        psiTurk.recordTrialData(experimentData);
+        psiTurk.saveData({
+          success: function() {
+            psiTurk.computeBonus("compute_bonus", function() {
+              $("#query").html(savedText);
+              psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+            });
+          }
+        });
       });
     }
   }
+  
   window.addEventListener('keydown', startFlanker);
 };
 
