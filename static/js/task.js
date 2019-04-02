@@ -192,7 +192,11 @@ var FlankerExperiment = function(isPractice) {
         $("#query").html("");
         return promiseTimeout(1000);
       }).then(function() {
-        return runFlankerBlock(20, {Session: 0, Block: 0, Date: (new Date()).toUTCString()});
+        return runFlankerBlock(2, {
+          Session: 0, 
+          Block: 0, 
+          Date: (new Date()).toUTCString()
+        });
       }).then(function() {
         $("#query").html("Agora o teste irá começar de verdade");
         return promiseTimeout(2000);
@@ -200,7 +204,11 @@ var FlankerExperiment = function(isPractice) {
         $("#query").html("");
         experimentData.push(data1);
         console.log("rodou primerio bloco", data1);
-        return runFlankerBlock(2, {Session: 0, Block: 1, Date: (new Date()).toUTCString()});
+        return runFlankerBlock(2, {
+          Session: 0, 
+          Block: 1, 
+          Date: (new Date()).toUTCString()
+        });
       }).then(function(data2) {
         console.log("rodou o segundo bloco", data2);
         experimentData.push(data2);
@@ -221,12 +229,28 @@ var FlankerExperiment = function(isPractice) {
         
         console.log("rodou o terceiro bloco", data3);
         
+        console.log("psiTurk task data:", psiTurk.taskdata);
+
         psiTurk.recordTrialData(experimentData);
         psiTurk.saveData({
           success: function() {
-            psiTurk.computeBonus("compute_bonus", function() {
-              $("#query").html(savedText);
-              psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+            $("#query").html(savedText);
+            // psiTurk.computeBonus("compute_bonus", function() {
+            //   psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+            // });
+
+            console.log("going to send request with uniqueId", uniqueId);
+            $.ajax("/compute_bonus", {
+              type: "GET",
+              data: {
+                uniqueId: uniqueId
+              },
+              success: function(res) {
+                console.log("REQ to compute_bonus SUCCESS", res);
+              },
+              error: function(res) {
+                console.log("REQ to compute_bonus FAIL", res);
+              }
             });
           }
         });

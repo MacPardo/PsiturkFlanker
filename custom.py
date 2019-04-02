@@ -95,6 +95,6 @@ def compute_bonus():
         resp = {"bonusComputed": "success"}
         return jsonify(**resp)
     except:
-        abort(404)  # again, bad to display HTML, but...
+        abort(400)  # again, bad to display HTML, but...
 
     
