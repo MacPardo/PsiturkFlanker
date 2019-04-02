@@ -131,45 +131,9 @@ var runFlankerBlock = function(nTrials, additionalData, callback) {
   
           execTrial();
         });
-        // setTimeout(function() {
-        //   $("#stim").html("");
-          
-        //   setTimeout(function() {
-        //     var input = listener.result();
-        //     console.log("input result:", input);
-  
-        //     var coherent = dir.target === dir.flanker;
-            
-        //     console.log('dir:', dir);
-        //     if (
-        //       input.keyCode === LEFT_KEY_CODE  && dir.target === 0 ||
-        //       input.keyCode === RIGHT_KEY_CODE && dir.target === 1
-        //     ) {
-        //       console.log('ACERTOU');
-        //       correctHits++;
-        //     } else {
-        //       console.log('ERROU');
-        //     }
-  
-        //     trialData.push({
-        //       ...additionalData, // TODO make this ES5 compatible
-        //       Condition: String(coherent),
-        //       TargetDirection: String(dir.target),
-        //       FlankerDirection: String(dir.flanker),
-        //       RT: String(input.delay / 1000),
-        //       Correct: (
-        //         input.keyCode === LEFT_KEY_CODE  && dir.target === 0 ||
-        //         input.keyCode === RIGHT_KEY_CODE && dir.target === 1
-        //       )
-        //     });
-  
-        //     execTrial();
-        //   }, boundedRandomFloat(ITIMinS, ITIMaxS) * 1000);
-        // }, arrowDurS * 1000);
       } else {
         console.log('TRIAL DATA IS', trialData);
         resolve({...trialData, accuracy: correctHits/nTrials});
-        // callback(trialData, correctHits/nTrials);
       }
     }
   
@@ -235,45 +199,8 @@ var FlankerExperiment = function(isPractice) {
         return runFlankerBlock(2, {Session: 1, Block: 0});
       }).then(function(data3) {
         console.log("rodou o terceiro bloco", data3);
+        $("#query").html(endText);
       });
-      // runFlankerBlock(2, {Session: 0, Block: 0}, function(data1, accuracy1) {
-      //   // EXECUTOU O MODO PRACTICE
-      //   console.log("ran first block!!!");
-      //   runFlankerBlock(2, {Session: 1, Block: 0}, function(data2, accuracy2) {
-      //     // EXECUTOU O PRIMEIRO BLOCO DO TEST
-      //     console.log("ran second block!!!");
-
-      //     if (accuracy2 <= ACCURACY_LOW) {
-      //       $("#query").html(lowAccText);
-      //     } else if (accuracy2 <= ACCURACY_MEDIUM) {
-      //       $("#query").html(midAccText);
-      //     } else {
-      //       $("#query").html(highAccText);
-      //     }
-      //     setTimeout(function() {
-      //       runFlankerBlock(2, {Session: 1, Block: 1}, function(data3, accuracy3) {
-      //         // EXECUTOU O SEGUNDO BLOCO DO TEST
-  
-      //         console.log("results 1", data1, accuracy1);
-      //         console.log("results 2", data2, accuracy2);
-      //         console.log("results 3", data3, accuracy3);
-      //         // psiTurk.recordUnstructuredData('ExperimentFinishTime', (new Date()).toUTCString());
-      //         var experimentFinishTime = (new Date()).toUTCString();
-      //         psiTurk.recordTrialData({
-      //           experimentStartTime: experimentStartTime,
-      //           experimentFinishTime: experimentFinishTime,
-      //           practiceBlock: data1,
-      //           firstTestBlock: data2,
-      //           secondTextBlock: data3
-      //         });
-      //         psiTurk.saveData(function(test) {
-      //           console.log("testing save data callback", test);
-      //         });
-      //         console.log("called save data");
-      //       });
-      //     }, 2000);
-      //   });
-      // });
     }
   }
   window.addEventListener('keydown', startFlanker);
