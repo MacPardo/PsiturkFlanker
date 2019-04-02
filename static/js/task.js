@@ -235,23 +235,9 @@ var FlankerExperiment = function(isPractice) {
         psiTurk.saveData({
           success: function() {
             $("#query").html(savedText);
-            // psiTurk.computeBonus("compute_bonus", function() {
-            //   psiTurk.completeHIT(); // when finished saving compute bonus, the quit
-            // });
 
             console.log("going to send request with uniqueId", uniqueId);
-            $.ajax("/compute_bonus", {
-              type: "GET",
-              data: {
-                uniqueId: uniqueId
-              },
-              success: function(res) {
-                console.log("REQ to compute_bonus SUCCESS", res);
-              },
-              error: function(res) {
-                console.log("REQ to compute_bonus FAIL", res);
-              }
-            });
+            psiTurk.completeHIT();
           }
         });
       });
