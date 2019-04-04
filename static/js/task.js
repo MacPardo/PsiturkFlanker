@@ -30,7 +30,8 @@ var pages = [
   "stage.html",
   "flankerStage.html",
   "postquestionnaire.html",
-  "exp/OCI-R.html"
+  "exp/OCI-R.html",
+  "exp/demographicQuestionnaire.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -258,12 +259,17 @@ var FlankerExperiment = function(isPractice) {
 /**
  * BEGIN OCI-R form code
  */
-var OciRQuestionnare = function() {
+var OciRQuestionnaire = function() {
   psiTurk.showPage("exp/OCI-R.html");
 }
 /**
  * END OCI-R form code
  */
+
+var DemographicQuestionnaire = function() {
+  console.log("I am going to load the dom questionnaire page");
+  psiTurk.showPage("exp/demographicQuestionnaire.html");
+}
 
 
 // Task object to keep track of the current phase
@@ -280,5 +286,6 @@ $(window).load(function() {
   //     currentview = new FlankerExperiment();
   //   } // what you want to do when you are done with instructions
   // );
-  OciRQuestionnare();
+  // OciRQuestionnaire();
+  DemographicQuestionnaire();
 });
