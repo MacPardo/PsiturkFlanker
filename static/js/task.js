@@ -35,7 +35,8 @@ var pages = [
   "exp/OCI-R.html",
   "exp/demographicQuestionnaire.html",
   "exp/YBOCS.html",
-  "exp/phqGad.html"
+  "exp/phqGad.html",
+  "exp/hiloStage.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -319,6 +320,7 @@ $(window).load(function() {
     RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
     RunForm.bind(this, "exp/demographicQuestionnaire.html", "dem"),
     FlankerExperiment,
+    HiLoExperiment,
     EndExperiment
   ]);
 });

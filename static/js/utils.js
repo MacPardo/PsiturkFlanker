@@ -19,8 +19,22 @@ function boolpercent(arr) {
 	return 100* count / arr.length;
 }
 
+/**
+ * 
+ * @param {Number} low 
+ * @param {Number} high 
+ */
 function boundedRandomFloat(low, high) {
 	return low + Math.random() * high;
+}
+
+/**
+ * 
+ * @param {Number} low 
+ * @param {Number} high 
+ */
+function boundedRandomInt(low, high) {
+  return parseInt(boundedRandomFloat(low, high));
 }
 
 
@@ -79,6 +93,11 @@ function dirPairToStr(dir) {
     secondaryChar;
 }
 
+/**
+ * 
+ * @param {Number} delay
+ * @returns {Promise} 
+ */
 function promiseTimeout(delay) {
   return new Promise(function(resolve, reject) {
     setTimeout(function() {
