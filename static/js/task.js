@@ -315,12 +315,16 @@ var currentview;
  * Run Task
  ******************/
 $(window).load(function() {
+  // execPromiseList([
+  //   RunForm.bind(this, "exp/phqGad.html", "phqgad"),
+  //   RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
+  //   RunForm.bind(this, "exp/demographicQuestionnaire.html", "dem"),
+  //   FlankerExperiment,
+  //   HiLoExperiment,
+  //   EndExperiment
+  // ]);
+
   execPromiseList([
-    RunForm.bind(this, "exp/phqGad.html", "phqgad"),
-    RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
-    RunForm.bind(this, "exp/demographicQuestionnaire.html", "dem"),
-    FlankerExperiment,
-    HiLoExperiment,
-    EndExperiment
+    HiLoExperiment
   ]);
 });

@@ -75,3 +75,22 @@ h1 {
   padding-right: 10px;
   padding-top: 15px;
 }
+
+
+
+.hilo-card {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  text-align: center;
+  line-height: 300px;
+  border: 1px solid black;
+}
+.hilo-card--left {
+  transform: translateX(-50%) translateX(-200px);
+}
+.hilo-card--right {
+  transform: translateX(-50%) translateX(200px);
+}

@@ -131,6 +131,21 @@ function execPromiseList(list) {
   }
 }
 
+/**
+ * @returns {Promise}
+ */
+function waitLeftOrRight() {
+  return new Promise(function(resolve) {
+    function fn(event) {
+      if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
+        window.removeEventListener(fn);
+        resolve();
+      }
+    }
+    window.addEventListener(fn);
+  });
+}
+
 var ACCURACY_LOW    = 0.75;
 var ACCURACY_MEDIUM = 0.90;
 
