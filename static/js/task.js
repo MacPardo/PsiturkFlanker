@@ -34,7 +34,8 @@ var pages = [
   "postquestionnaire.html",
   "exp/OCI-R.html",
   "exp/demographicQuestionnaire.html",
-  "exp/YBOCS.html"
+  "exp/YBOCS.html",
+  "exp/phqGad.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -69,7 +70,6 @@ var flankerInstructionPages = [
  * 
  * @param {Number} nTrials 
  * @param {Object} additionalData
- * @param {Function} callback
  */
 var runFlankerBlock = function(nTrials, additionalData) {
   var arrowDurS = 0.2;
@@ -296,6 +296,17 @@ var RunForm = function(formPage, formName) {
   });
 }
 
+var EndExperiment = function() {
+  return new Promise(function(resolve) {
+    psiTurk.recordTrialData(GLOBAL_DATA);
+    psiTurk.saveData({
+      success: function() {
+        resolve();
+      }
+    })
+  });
+}
+
 // Task object to keep track of the current phase
 var currentview;
 
@@ -303,21 +314,11 @@ var currentview;
  * Run Task
  ******************/
 $(window).load(function() {
-  // psiTurk.doInstructions(
-  //   flankerInstructionPages, // a list of pages you want to display in sequence
-  //   function() {
-  //     // currentview = new StroopExperiment();
-  //     currentview = new FlankerExperiment();
-  //   } // what you want to do when you are done with instructions
-  // );
-  // OciRQuestionnaire();
-  // RunForm("exp/YBOCS.html", "ybocs").then(function() {
-  //   FlankerExperiment();
-  // });
-
   execPromiseList([
-    // RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
+    RunForm.bind(this, "exp/phqGad.html", "phqgad"),
     RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
-    FlankerExperiment
+    RunForm.bind(this, "exp/demographicQuestionnaire.html", "dem"),
+    FlankerExperiment,
+    EndExperiment
   ]);
 });

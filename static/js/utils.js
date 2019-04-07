@@ -87,6 +87,11 @@ function promiseTimeout(delay) {
   });
 }
 
+/**
+ * 
+ * @param {(()=>Promise<any>)[]} list
+ * @returns {Promise<any>} 
+ */
 function execPromiseList(list) {
   if (list.length === 0) {
     return new Promise(function(resolve) {
