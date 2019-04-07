@@ -87,6 +87,26 @@ function promiseTimeout(delay) {
   });
 }
 
+function execPromiseList(list) {
+  if (list.length === 0) {
+    return new Promise(function(resolve) {
+      resolve();
+    });
+  } else {
+    var promiseFun = list.shift(); // also removes first element of list
+
+    console.log("I am going to run ", promiseFun);
+
+    var result = promiseFun();
+
+    console.log("result is", result);
+
+    return result.then(function() {
+       return execPromiseList(list);
+    });
+  }
+}
+
 var ACCURACY_LOW    = 0.75;
 var ACCURACY_MEDIUM = 0.90;
 

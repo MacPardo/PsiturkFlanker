@@ -166,3 +166,54 @@ Traceback (most recent call last):
   File "/usr/lib/python2.7/site-packages/gunicorn/http/_sendfile.py", line 67, in sendfile
     raise OSError(e, os.strerror(e))
 OSError: [Errno 32] Broken pipe
+[2019-04-05 14:20:50 +0000] [11169] [ERROR] Error handling request
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/gunicorn/workers/sync.py", line 174, in handle_request
+    resp.write_file(respiter)
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/wsgi.py", line 397, in write_file
+    if not self.sendfile(respiter):
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/wsgi.py", line 387, in sendfile
+    sent += sendfile(sockno, fileno, offset + sent, count)
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/_sendfile.py", line 67, in sendfile
+    raise OSError(e, os.strerror(e))
+OSError: [Errno 32] Broken pipe
+[2019-04-05 14:20:51 +0000] [11171] [ERROR] Error handling request
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/gunicorn/workers/sync.py", line 174, in handle_request
+    resp.write_file(respiter)
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/wsgi.py", line 397, in write_file
+    if not self.sendfile(respiter):
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/wsgi.py", line 387, in sendfile
+    sent += sendfile(sockno, fileno, offset + sent, count)
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/_sendfile.py", line 67, in sendfile
+    raise OSError(e, os.strerror(e))
+OSError: [Errno 32] Broken pipe
+[2019-04-05 19:22:30 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3568)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3569)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3573)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3574)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3576)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3578)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3579)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3581)
+[2019-04-05 19:22:31 +0000] [3564] [CRITICAL] WORKER TIMEOUT (pid:3582)
+[2019-04-06 12:24:01 +0000] [5050] [ERROR] Error handling request
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/gunicorn/workers/sync.py", line 174, in handle_request
+    resp.write_file(respiter)
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/wsgi.py", line 397, in write_file
+    if not self.sendfile(respiter):
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/wsgi.py", line 387, in sendfile
+    sent += sendfile(sockno, fileno, offset + sent, count)
+  File "/usr/lib/python2.7/site-packages/gunicorn/http/_sendfile.py", line 67, in sendfile
+    raise OSError(e, os.strerror(e))
+OSError: [Errno 32] Broken pipe
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5351)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5353)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5355)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5357)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5358)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5360)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5361)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5363)
+[2019-04-06 18:07:22 +0000] [5347] [CRITICAL] WORKER TIMEOUT (pid:5364)

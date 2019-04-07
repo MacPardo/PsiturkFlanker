@@ -15,6 +15,8 @@ console.log('uniqueId', uniqueId);
 console.log('adServerLoc', adServerLoc);
 console.log('mode', mode);
 
+var GLOBAL_DATA = {};
+
 
 var mycondition = condition; // these two variables are passed by the psiturk server process
 var mycounterbalance = counterbalance; // they tell you which condition you have been assigned to
@@ -31,7 +33,8 @@ var pages = [
   "flankerStage.html",
   "postquestionnaire.html",
   "exp/OCI-R.html",
-  "exp/demographicQuestionnaire.html"
+  "exp/demographicQuestionnaire.html",
+  "exp/YBOCS.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -148,35 +151,35 @@ var runFlankerBlock = function(nTrials, additionalData) {
   });
 }
 
-var FlankerExperiment = function(isPractice) {
+var FlankerExperiment = function() {
 
-  var instructionText = "Fixe o olhar no centro da tela. Você verá um grupo de setas."+
-    "<br>Preste atenção na seta do centro e ignore as outras.<br><br>" +
-    "Usando a sua mão direita, pressione &larr; "+
-    "(esquerda) sempre que a seta central apontar para a ESQUERDA e <br>"+
-    "&rarr; (direita) quando apontar para a DIREITA.<br><br>"+
-    "Responda o mais rápido e corretamente possível.<br><br>" +
-    "Pressione &larr; ou &rarr; para iniciar.";
+  var instructionText = "Keep your sight in the center of the screen. You will see a set of arrows."+
+    "<br>Pay attention to the central arrow, ignoring the others.<br><br>" +
+    "Using your right hand, press &larr; "+
+    "(left) everytime the central arrow points to LEFT and <br>"+
+    "&rarr; (right) when it points to RIGHT.<br><br>"+
+    "Please respond as quickly and accurately as possible.<br><br>" +
+    "Press &larr; or &rarr; to start.";
   var pauseText =  
-    "Descanse um pouco.<br>" +
-    "Quando estiver pronto, pressione &larr; (seta para a esquerda)<br>" +
-    "Ou &rarr; (seta para a direita) para continuar";
+    "Take a rest.<br>" +
+    "When you are ready, press &larr; (left arrow)<br>" +
+    "or &rarr; (right arrow) to continue";
   var longPauseText =   
-    "O experientador vai abrir uma porta da cabine agora. Descanse durante esse tempo.<br><br>"+
-    "Pressione &larr; (seta para a esquerda)<br>"+
-    "Ou &rarr; (seta para a direita) para continuar";
-  var practiceEndText =   
-    "Você terminou a prática. Pressione qualquer tecla para encerrar."+
-    "Em seguida, aguarde até que o experimentador abra a porta da cabine.";
+    "Take a rest.<br><br>"+
+    "Press &larr; (left arrow)<br>"+
+    "Or &rarr; (right arrow) to continue";
+  var practiceEndText = "You have finished the practice block. Press any key to start the task.";
+  var endText = "Thank you for participating in this research!<br><br>";
+  var lowAccText = "Try to answer more correctly.";
+  var highAccText = "Try to answer more quickly.";
+  var midAccText = "You are going very well!";
+
   var endText = "Obrigado pela sua participação!<br><br>"+
     "Por favor, não feche a janela até que as informações do teste sejam salvas.<br>"+
     "Salvando...";
   var savedText = "Obrigado pela sua participação!<br><br>"+
-    "Dados salvos! A janela já pode ser fechada";
-  var lowAccText = "Tente ser mais correto nas suas respostas.";
-  var highAccText = "Tente responder mais rápido.";
-  var midAccText = "Você está indo muito bem!";
-
+  "Dados salvos! A janela já pode ser fechada";
+  
   psiTurk.showPage('flankerStage.html');
 
   // psiTurk.recordUnstructuredData('ExperimentStartTime', (new Date()).toUTCString());
@@ -185,72 +188,80 @@ var FlankerExperiment = function(isPractice) {
 
   // First run a practice session
   $("#query").html(instructionText);
-  function startFlanker(event) {
-    console.log("start flanker!!!!!!", event);
-    if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
-      window.removeEventListener("keydown", startFlanker);
-      
-      $("#query").html(
-        "Primeiro você irá treinar um pouco<br>"+
-        "Após o treino o teste irá iniciar realmente"
-      );
-      promiseTimeout(2000).then(function() {
-        $("#query").html("");
-        return promiseTimeout(1000);
-      }).then(function() {
-        return runFlankerBlock(2, {
-          Session: 0, 
-          Block: 0, 
-          Date: (new Date()).toUTCString()
-        });
-      }).then(function() {
-        $("#query").html("Agora o teste irá começar de verdade");
-        return promiseTimeout(2000);
-      }).then(function(data1) {
-        $("#query").html("");
-        experimentData.push(data1);
-        console.log("rodou primerio bloco", data1);
-        return runFlankerBlock(2, {
-          Session: 0, 
-          Block: 1, 
-          Date: (new Date()).toUTCString()
-        });
-      }).then(function(data2) {
-        console.log("rodou o segundo bloco", data2);
-        experimentData.push(data2);
-        if (data2.accuracy <= ACCURACY_LOW) {
-          $("#query").html(lowAccText);
-        } else if (data2.accuracy <= ACCURACY_MEDIUM) {
-          $("#query").html(midAccText);
-        } else {
-          $("#query").html(highAccText);
-        }
-        return promiseTimeout(2000);
-      }).then(function() {
-        $("#query").html("");
-        return runFlankerBlock(2, {Session: 1, Block: 0, Date: (new Date()).toUTCString()});
-      }).then(function(data3) {
-        experimentData.push(data3);
-        $("#query").html(endText);
-        
-        console.log("rodou o terceiro bloco", data3);
-        
-        console.log("psiTurk task data:", psiTurk.taskdata);
 
-        psiTurk.recordTrialData(experimentData);
-        psiTurk.saveData({
-          success: function() {
-            $("#query").html(savedText);
-
-            console.log("going to send request with uniqueId", uniqueId);
-            psiTurk.completeHIT();
+  return new Promise(function(resolve) {
+    function startFlanker(event) {
+      console.log("start flanker!!!!!!", event);
+      if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
+        window.removeEventListener("keydown", startFlanker);
+        
+        $("#query").html(
+          "First you will take some practice trials<br>"+
+          "When the practice block is over, the real task will begin"
+        );
+        promiseTimeout(2000).then(function() {
+          $("#query").html("");
+          return promiseTimeout(1000);
+        }).then(function() {
+          return runFlankerBlock(2, {
+            Session: 0, 
+            Block: 0, 
+            Date: (new Date()).toUTCString()
+          });
+        }).then(function() {
+          $("#query").html("Agora o teste irá começar de verdade");
+          return promiseTimeout(2000);
+        }).then(function(data1) {
+          $("#query").html("");
+          experimentData.push(data1);
+          console.log("rodou primerio bloco", data1);
+          return runFlankerBlock(2, {
+            Session: 0, 
+            Block: 1, 
+            Date: (new Date()).toUTCString()
+          });
+        }).then(function(data2) {
+          console.log("rodou o segundo bloco", data2);
+          experimentData.push(data2);
+          if (data2.accuracy <= ACCURACY_LOW) {
+            $("#query").html(lowAccText);
+          } else if (data2.accuracy <= ACCURACY_MEDIUM) {
+            $("#query").html(midAccText);
+          } else {
+            $("#query").html(highAccText);
           }
-        });
-      });
-    }
-  }
+          return promiseTimeout(2000);
+        }).then(function() {
+          $("#query").html("");
+          return runFlankerBlock(2, {Session: 1, Block: 0, Date: (new Date()).toUTCString()});
+        }).then(function(data3) {
+          experimentData.push(data3);
+          $("#query").html(endText);
+          
+          console.log("rodou o terceiro bloco", data3);
+          
+          console.log("psiTurk task data:", psiTurk.taskdata);
   
-  window.addEventListener('keydown', startFlanker);
+          GLOBAL_DATA['flanker'] = experimentData;
+          resolve();
+          // psiTurk.recordTrialData(experimentData);
+          // psiTurk.saveData({
+          //   success: function() {
+          //     $("#query").html(savedText);
+  
+          //     console.log("going to send request with uniqueId", uniqueId);
+          //     psiTurk.completeHIT();
+          //     resolve();
+          //   }
+          // });
+        });
+      }
+    }
+    
+    window.addEventListener('keydown', startFlanker);
+
+  });
+
 };
 /********************
  * END FLANKER CODE *
@@ -271,6 +282,19 @@ var DemographicQuestionnaire = function() {
   psiTurk.showPage("exp/demographicQuestionnaire.html");
 }
 
+var RunForm = function(formPage, formName) {
+  psiTurk.showPage(formPage);
+
+  var form = $("#" + formName).find("form");
+
+  return new Promise(resolve => {
+    $(form).submit(function(event) {
+      event.preventDefault();
+      GLOBAL_DATA[formName] = $(form).serializeArray();
+      resolve();
+    });
+  });
+}
 
 // Task object to keep track of the current phase
 var currentview;
@@ -287,5 +311,13 @@ $(window).load(function() {
   //   } // what you want to do when you are done with instructions
   // );
   // OciRQuestionnaire();
-  DemographicQuestionnaire();
+  // RunForm("exp/YBOCS.html", "ybocs").then(function() {
+  //   FlankerExperiment();
+  // });
+
+  execPromiseList([
+    // RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
+    RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
+    FlankerExperiment
+  ]);
 });
