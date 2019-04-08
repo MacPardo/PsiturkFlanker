@@ -1,9 +1,10 @@
 'use strict';
 
-
 var hiloConst = {
     CARD_MIN: 1,
     CARD_MAX: 9,
+
+    FIX_CROSS_DURATION: 500,
 
     CARDS_GUESS_TIME : 2000,
     CARDS_REVEAL_TIME: 1000,
@@ -101,7 +102,27 @@ TITLE
  * Sempre colocar o número do trial
  * 
  * Salvar o tempo de apresentação/espera
+ * 
+ * 
+ * Exibir feedback & pontuação após cada jogada
+ * lembrar de salvar a pontuação
+ * +100 p/ acerto
+ * -100 p/ erro
  */
+
+/**
+ * @returns {Promise}
+ */
+function displayCross() {
+    $("#hilo-left-card").hide(0);
+    $("#hilo-right-card").hide(0);
+    $("#hilo-middle-card").hide(0);
+    $("#hilo-cross").show(0);
+
+    return promiseTimeout(hiloConst.FIX_CROSS_DURATION).then(function() {
+        $("#hilo-cross").hide(0);
+    });
+}
 
 /**
  * @param {Object} baseData
@@ -142,13 +163,25 @@ function hiloGuess(baseData) {
 
         hiddenCard.text(hiddenNum);
 
+        if (result.keyCode === LEFT_KEY_CODE) {
+            var keyPressed = 0;
+        } else if (result.keyCode === RIGHT_KEY_CODE) {
+            var keyPressed = 1;
+        } else {
+            var keyPressed = NaN;
+        }
+
         var data = {
             delay: result.delay,
             correct: (
                 (result.keyCode === LEFT_KEY_CODE  && hiddenNum < visibleNum) || 
                 (result.keyCode === RIGHT_KEY_CODE && hiddenNum > visibleNum)
             ) ? 1 : 0,
-            tried: result.inputHappened ? 1 : 0
+            tried:         result.inputHappened ? 1 : 0,
+            visibleNumber: visibleNum,
+            hiddenNumber:  hiddenNum,
+            keyPressed:    keyPressed,
+            stimDuration:  stimDur
         };
 
         // Object.assign(data, baseData);
@@ -171,19 +204,51 @@ function hiloGuess(baseData) {
     });
 }
 
+/**
+ * 
+ * @param {Object} baseData
+ * @returns {Promise}
+ */
+function hiloTrial(baseData) {
+    return displayCross()
+        .then(hiloGuess.bind(this, baseData));
+}
 
 /**
- * @returns {Promise<any>}
+ * 
+ * @param {Number} numberOfTrials 
+ * @param {Object} baseData
+ * @param {Number} currentTrial
+ * @returns {Promise<Object[]>}
+ */
+function hiloBlock(numberOfTrials, baseData) {
+
+    var trialData = [];
+    var currentTrial = 0;
+
+    return new Promise(function(resolve) {
+        function execTrial() {
+            if (currentTrial >= numberOfTrials) {
+                resolve(trialData);
+            } else {
+                hiloTrial(baseData).then(function(data) {
+                    trialData.push(data);
+                    currentTrial++;
+                    execTrial();
+                });
+            }
+        }
+        execTrial();
+    });
+}
+
+/**
+ * @returns {Promise}
  */
 function HiLoExperiment() {
     psiTurk.showPage("exp/hiloStage.html");
 
-    return hiloGuess().then(function(result) {
-        console.log("result is", result);
-        return promiseTimeout(1000);
-    }).then(function() {
-        return hiloGuess();
-    }).then(function(result) {
-        console.log("second result is", result);
+    return hiloBlock(2, {}).then(function(data) {
+        console.log("HiLo data is", data);
     });
 }

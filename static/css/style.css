@@ -94,3 +94,9 @@ h1 {
 .hilo-card--right {
   transform: translateX(-50%) translateX(200px);
 }
+
+.hilo-cross {
+  font-size: 40px;
+  text-align: center;
+  margin-top: 50px;
+}
