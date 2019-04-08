@@ -19,6 +19,8 @@ var hiloConst = {
     ITI_MIN: 3000,
     ITI_MAX: 5000,
 
+    FEEDBACK_TIME: 1500,
+
     PAUSE_DURATION: 60000,
 
     COUNTDOWN_DUR: 1000,
@@ -26,8 +28,28 @@ var hiloConst = {
     PRACTICE_BLOCKS: 1,
     PRACTICE_TRIALS: 9,
     TEST_BLOCKS: 6,
-    TEST_TRIALS: 18
+    TEST_TRIALS: 18,
+
+    TRIAL_POINTS: 100,
+
+    FEEDBACK_CORRECT: "You got it right! +100 points",
+    FEEDBACK_WRONG: "You missed it! -100 points",
 };
+
+/** jQuery selectors */
+var hiloEls = {
+    feedback: "#hilo-feedback",
+    visibleCard: "#hilo-left-card",
+    hiddenCard: "#hilo-right-card",
+    revealCard: "#hilo-middle-card"
+};
+
+function hideAll(els) {
+    for (var el in els) {
+        $(els[el]).hide(0);
+    }
+}
+
 
 /*
 if expInfo2['Session'] == '0': #practice
@@ -125,8 +147,31 @@ function displayCross() {
 }
 
 /**
- * @param {Object} baseData
- * @returns {Promise}
+ * @typedef  {Object} HiloBaseData
+ * @property {Number} totalPoints
+ * @property {Number} trial
+ * @property {Number} block
+ */
+
+/**
+ * @typedef  {Object} HiloData
+ * @property {Number} delay
+ * @property {Number} correct
+ * @property {Number} tried
+ * @property {Number} visibleNumber
+ * @property {Number} hiddenNumber
+ * @property {Number} keyPressed
+ * @property {Number} stimDuration
+ * @property {Number} pointDiff
+ * @property {Number} totalPointsBefore
+ * @property {Number} totalPointsAfter
+ * @property {Number} trial
+ * @property {Number} block
+ */
+
+/**
+ * @param {HiloBaseData} baseData
+ * @returns {Promise<HiloData>}
  */
 function hiloGuess(baseData) {
 
@@ -171,17 +216,27 @@ function hiloGuess(baseData) {
             var keyPressed = NaN;
         }
 
+        var correct = (
+            (result.keyCode === LEFT_KEY_CODE  && hiddenNum < visibleNum) || 
+            (result.keyCode === RIGHT_KEY_CODE && hiddenNum > visibleNum)
+        ) ? 1 : 0;
+        var pointDiff = correct ? +hiloConst.TRIAL_POINTS : -hiloConst.TRIAL_POINTS;
+
+
+        /** @type {HiloData} */
         var data = {
-            delay: result.delay,
-            correct: (
-                (result.keyCode === LEFT_KEY_CODE  && hiddenNum < visibleNum) || 
-                (result.keyCode === RIGHT_KEY_CODE && hiddenNum > visibleNum)
-            ) ? 1 : 0,
-            tried:         result.inputHappened ? 1 : 0,
-            visibleNumber: visibleNum,
-            hiddenNumber:  hiddenNum,
-            keyPressed:    keyPressed,
-            stimDuration:  stimDur
+            delay:              result.delay / 1000,
+            correct:            correct,
+            tried:              result.inputHappened ? 1 : 0,
+            visibleNumber:      visibleNum,
+            hiddenNumber:       hiddenNum,
+            keyPressed:         keyPressed,
+            stimDuration:       stimDur / 1000,
+            pointDiff:          pointDiff,
+            totalPointsBefore:  baseData.totalPoints,
+            totalPointsAfter:   baseData.totalPoints + pointDiff,
+            trial:              baseData.trial,
+            block:              baseData.block
         };
 
         // Object.assign(data, baseData);
@@ -199,26 +254,53 @@ function hiloGuess(baseData) {
             revealCard.text(hiddenNum);
             return promiseTimeout(hiloConst.MISTERY_CARD_TIME);
         }).then(function() {
+            revealCard.hide(0);
             return data;
+        });
+    });
+}
+
+/*
+Exibir feedback & pontuação após cada jogada
+lembrar de salvar a pontuação
++100 p/ acerto
+-100 p/ erro
+*/
+
+/**
+ * 
+ * @param {HiloData} data
+ * @returns {Promise<HiloData>}
+ */
+function hiloFeedback(data) {
+    return new Promise(function(resolve) {
+        $(hiloEls.feedback).show(0);
+        $(hiloEls.feedback).text(data.correct ? hiloConst.FEEDBACK_CORRECT : hiloConst.FEEDBACK_WRONG);
+        promiseTimeout(hiloConst.FEEDBACK_TIME).then(function() {
+            $(hiloEls.feedback).hide(0);
+            $(hiloEls.feedback).html("");
+            resolve(data);
         });
     });
 }
 
 /**
  * 
- * @param {Object} baseData
- * @returns {Promise}
+ * @param   {HiloBaseData} baseData
+ * @returns {HiloData}
  */
 function hiloTrial(baseData) {
-    return displayCross()
-        .then(hiloGuess.bind(this, baseData));
+    return displayCross().then(function() {
+        return hiloGuess(baseData);
+    }).then(function(data) {
+        return hiloFeedback(data);
+    });
 }
 
 /**
  * 
  * @param {Number} numberOfTrials 
  * @param {Object} baseData
- * @param {Number} currentTrial
  * @returns {Promise<Object[]>}
  */
 function hiloBlock(numberOfTrials, baseData) {
