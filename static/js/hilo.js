@@ -151,16 +151,17 @@ function displayCross() {
  * @property {Number} totalPoints
  * @property {Number} trial
  * @property {Number} block
+ * @property {Number} session 0 or 1
  */
 
 /**
  * @typedef  {Object} HiloData
  * @property {Number} delay
- * @property {Number} correct
- * @property {Number} tried
+ * @property {Number} correct 0 or 1
+ * @property {Number} tried 0 or 1
  * @property {Number} visibleNumber
  * @property {Number} hiddenNumber
- * @property {Number} keyPressed
+ * @property {Number} keyPressed 0 (left) or 1 (right)
  * @property {Number} stimDuration
  * @property {Number} pointDiff
  * @property {Number} totalPointsBefore
@@ -236,7 +237,8 @@ function hiloGuess(baseData) {
             totalPointsBefore:  baseData.totalPoints,
             totalPointsAfter:   baseData.totalPoints + pointDiff,
             trial:              baseData.trial,
-            block:              baseData.block
+            block:              baseData.block,
+            session:            baseData.session
         };
 
         // Object.assign(data, baseData);
@@ -299,23 +301,41 @@ function hiloTrial(baseData) {
 
 /**
  * 
- * @param {Number} numberOfTrials 
- * @param {Object} baseData
- * @returns {Promise<Object[]>}
+ * @param {Number} numberOfTrials
+ * @param {Number} currentBlock
+ * @param {Number} session 0 or 1
+ * @returns {Promise<HiloData[]>}
  */
-function hiloBlock(numberOfTrials, baseData) {
+function hiloBlock(numberOfTrials, currentBlock, session) {
 
+    /** @type {HiloData[]} */
     var trialData = [];
+
     var currentTrial = 0;
+    var points = 0;
+
+    console.log("I am going to run a block", numberOfTrials, currentBlock, session);
 
     return new Promise(function(resolve) {
         function execTrial() {
             if (currentTrial >= numberOfTrials) {
+                console.log("End of block " + currentBlock + " session " + session);
+                console.log(trialData);
                 resolve(trialData);
             } else {
+
+                /** @type {HiloBaseData} */
+                var baseData = {
+                    block: currentBlock,
+                    totalPoints: points,
+                    trial: currentTrial,
+                    session: session
+                };
+
                 hiloTrial(baseData).then(function(data) {
                     trialData.push(data);
                     currentTrial++;
+                    points = data.totalPointsAfter;
                     execTrial();
                 });
             }
@@ -325,12 +345,64 @@ function hiloBlock(numberOfTrials, baseData) {
 }
 
 /**
+ * 
+ * @param {Number} numberOfBlocks 
+ * @param {Number} numberOfTrials 
+ * @param {Number} session 
+ * @returns {Promise<HiloData[]>}
+ */
+function hiloBlocks(numberOfBlocks, numberOfTrials, session) {
+
+    /** @type {HiloData[]} */
+    var blockData = [];
+
+    var currentBlock = 0;
+
+    return new Promise(function(resolve) {
+        function execBlock() {
+            console.log("running exec block", blockData, currentBlock);
+            if (currentBlock >= numberOfBlocks) {
+                resolve(blockData);
+            } else {
+                hiloBlock(numberOfTrials, currentBlock, session).then(function(data) {
+                    blockData = blockData.concat(data);
+                    currentBlock++;
+                    execBlock();
+                });
+            }
+        }
+        execBlock();
+    });
+}
+
+/*
+if expInfo2['Session'] == '0': #practice
+    nBlocks = 1
+    nTrials =  9
+elif expInfo2['Session'] == '1': #test
+    nBlocks = 6
+    nTrials =  18
+*/
+
+/**
  * @returns {Promise}
  */
 function HiLoExperiment() {
-    psiTurk.showPage("exp/hiloStage.html");
 
-    return hiloBlock(2, {}).then(function(data) {
-        console.log("HiLo data is", data);
-    });
+    /** @type {HiloData[]} */
+    var expData = [];
+
+    psiTurk.showPage("exp/hiloStage.html");
+    
+    // return hiloBlock(4, 0, 0);
+    return hiloBlocks(1, 2, 0);
+
+    // return hiloBlocks(1, 9, 0).then(function(data) {
+    //     hiloData = hiloData.concat(data);
+    //     return hiloBlocks(6, 18, 1);
+    // }).then(function(data) {
+    //     hiloData = hiloData.concat(data);
+    //     return hiloData;
+    // });
+
 }
