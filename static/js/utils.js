@@ -1,3 +1,4 @@
+'use strict';
 
 function AssertException(message) { this.message = message; }
 AssertException.prototype.toString = function () {
@@ -103,6 +104,22 @@ function promiseTimeout(delay) {
     setTimeout(function() {
       resolve();
     }, delay);
+  });
+}
+
+/**
+ * Resolves when either left or right arrow key is pressed
+ * @returns {Promise}
+ */
+function promiseWaitKeys() {
+  return new Promise(function(resolve) {
+    function fn(event) {
+      if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
+        window.removeEventListener("keydown", fn);
+        resolve();
+      }
+    }
+    window.addEventListener("keydown", fn);
   });
 }
 
