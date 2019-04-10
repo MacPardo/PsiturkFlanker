@@ -378,19 +378,30 @@ function hiloBlocks(numberOfBlocks, numberOfTrials, session) {
     function execBlock() {
       console.log("running exec block", blockData, currentBlock);
       if (currentBlock >= numberOfBlocks) {
+        console.log("I am inside hiloBlocks and I am going to resolve");
         resolve(blockData);
       } else {
         hiloBlock(numberOfTrials, currentBlock, session).then(function (data) {
+
+          console.log("I got HERE");
+
           blockData = blockData.concat(data);
           currentBlock++;
 
           hideAll(hiloEls);
-          $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
-          waitLeftOrRight().then(function() {
-            $(hiloEls.feedback).html("");
-            $(hiloEls.feedback).hide(0);
+
+          // só exibe a mensagem entre blocos se não for o último bloco
+          if (currentBlock < numberOfBlocks - 1) {
+            $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
+            $(hiloEls.feedback).show(0);
+            waitLeftOrRight().then(function() {
+              $(hiloEls.feedback).html("");
+              $(hiloEls.feedback).hide(0);
+              execBlock();
+            });
+          } else {
             execBlock();
-          });
+          }
         });
       }
     }
@@ -442,19 +453,37 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(1, 9, 0);
+    // return hiloBlocks(1, 9, 0);
+    return hiloBlocks(1, 1, 0);
   }).then(function(data) {
+    console.log("I got to the other side of the promise");
     expData = expData.concat(data);
     hideAll(hiloEls);
+    $(hiloEls.feedback).show(0);
     $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
     return waitLeftOrRight();
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(6, 18, 1);
+    // return hiloBlocks(6, 18, 1);
+    return hiloBlock(2, 2, 1);
   }).then(function(data) {
-    expData = expData.concat(data);
 
+    console.log("finished all blocks");
+    expData = expData.concat(data);
+    hideAll();
+    $(hiloEls.feedback).show(0);
+    $(hiloEls.feedback).html(
+      "Thank you for participating!<br><br>"+
+      "Press &larr; or &rarr; to continue."
+    );
+    
+    return waitLeftOrRight();
+  }).then(function() {
+    $(hiloEls).html("");
+    hideAll(hiloEls);
+
+    console.log("expData is", expData);
     return expData;
   });
 
