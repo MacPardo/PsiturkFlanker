@@ -63,7 +63,7 @@ h1 {
 }
 
 #query {
-  color: darkgray;
+  color: black;
 }
 
 .question {
@@ -109,4 +109,10 @@ h1 {
   max-width: 500px;
   margin: 0 auto;
   margin-top: 80px;
+}
+
+
+.form-container {
+  padding-top: 50px;
+  padding-bottom: 50px;
 }

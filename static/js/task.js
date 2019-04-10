@@ -34,7 +34,7 @@ var pages = [
   "flankerStage.html",
   "postquestionnaire.html",
   "exp/OCI-R.html",
-  "exp/demographicQuestionnaire.html",
+  "exp/demographic.html",
   "exp/YBOCS.html",
   "exp/phqGad.html",
   "exp/hiloStage.html"
@@ -106,7 +106,6 @@ var runFlankerBlock = function(nTrials, additionalData) {
         var divHTML = "<div style='font-size: 44px;'>" + str + "</div>";
   
         $("#stim").html(divHTML);
-        waitingForKeyPress = true;
         listener.listen();
   
         promiseTimeout(arrowDurS * 1000).then(function() {
@@ -155,7 +154,7 @@ var runFlankerBlock = function(nTrials, additionalData) {
 
 var FlankerExperiment = function() {
 
-  var instructionText = "Keep your sight in the center of the screen. You will see a set of arrows."+
+  var instructionText = "Keep your eyes at the center of the screen. You will see a set of arrows."+
     "<br>Pay attention to the central arrow, ignoring the others.<br><br>" +
     "Using your right hand, press &larr; "+
     "(left) everytime the central arrow points to LEFT and <br>"+
@@ -269,20 +268,6 @@ var FlankerExperiment = function() {
  * END FLANKER CODE *
  ********************/
 
-/**
- * BEGIN OCI-R form code
- */
-var OciRQuestionnaire = function() {
-  psiTurk.showPage("exp/OCI-R.html");
-}
-/**
- * END OCI-R form code
- */
-
-var DemographicQuestionnaire = function() {
-  console.log("I am going to load the dom questionnaire page");
-  psiTurk.showPage("exp/demographicQuestionnaire.html");
-}
 
 var RunForm = function(formPage, formName) {
   psiTurk.showPage(formPage);
@@ -329,5 +314,6 @@ $(window).load(function() {
   //   HiLoExperiment
   // ]);
 
-  HiLoExperiment();
+  // FlankerExperiment();
+  // HiLoExperiment();
 });
