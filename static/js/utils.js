@@ -67,7 +67,6 @@ function DelayedInput() {
     waitingForKeyPress = true;
     inputHappened = false;
     lastKeyCode = NaN;
-    lastKeyTime = NaN;
     inputDelay = NaN;
     startTime = Math.floor(Date.now());
   }
@@ -155,11 +154,11 @@ function waitLeftOrRight() {
   return new Promise(function(resolve) {
     function fn(event) {
       if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
-        window.removeEventListener(fn);
+        window.removeEventListener("keydown", fn);
         resolve();
       }
     }
-    window.addEventListener(fn);
+    window.addEventListener("keydown", fn);
   });
 }
 

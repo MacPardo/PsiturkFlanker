@@ -325,7 +325,9 @@ $(window).load(function() {
   //   EndExperiment
   // ]);
 
-  execPromiseList([
-    HiLoExperiment
-  ]);
+  // execPromiseList([
+  //   HiLoExperiment
+  // ]);
+
+  HiLoExperiment();
 });

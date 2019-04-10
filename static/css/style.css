@@ -87,6 +87,7 @@ h1 {
   text-align: center;
   line-height: 300px;
   border: 1px solid black;
+  font-size: 40px;
 }
 .hilo-card--left {
   transform: translateX(-50%) translateX(-200px);
@@ -99,4 +100,13 @@ h1 {
   font-size: 40px;
   text-align: center;
   margin-top: 50px;
+}
+
+
+#hilo-feedback {
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  margin-top: 80px;
 }

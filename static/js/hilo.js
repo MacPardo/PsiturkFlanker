@@ -32,8 +32,10 @@ var hiloConst = {
 
   TRIAL_POINTS: 100,
 
-  FEEDBACK_CORRECT: "You got it right! +100 points",
-  FEEDBACK_WRONG: "You missed it! -100 points",
+  INTRO_TEXT: "Look at the center of the screen.<br>"+
+    "You'll see two cards, one with a number and another witha a question mark.",
+  
+  TEXT_BETWEEN_BLOCKS: "You can take a rest now. Press &larr; or &rarr; to continue the task."
 };
 
 /** jQuery selectors */
@@ -41,7 +43,8 @@ var hiloEls = {
   feedback: "#hilo-feedback",
   visibleCard: "#hilo-left-card",
   hiddenCard: "#hilo-right-card",
-  revealCard: "#hilo-middle-card"
+  revealCard: "#hilo-middle-card",
+  cross: "#hilo-cross"
 };
 
 function hideAll(els) {
@@ -275,12 +278,22 @@ lembrar de salvar a pontuação
  * @returns {Promise<HiloData>}
  */
 function hiloFeedback(data) {
+  
+  var wrongImg = "<img src='/static/images/error-128.png' />";
+  var correctImg = "<img src='/static/images/ok-128.png' />";
+
+  var feedbackCorrect = "Correct!<br>+100 points.<br>Total = " + data.totalPointsAfter;
+  var feedbackWrong = "Wrong!<br>-100 points.<br>Total = " + data.totalPointsAfter;
+
   return new Promise(function (resolve) {
     $(hiloEls.feedback).show(0);
-    $(hiloEls.feedback).text(data.correct ? hiloConst.FEEDBACK_CORRECT : hiloConst.FEEDBACK_WRONG);
+    $(hiloEls.feedback).html(data.correct ? correctImg : wrongImg);
     promiseTimeout(hiloConst.FEEDBACK_TIME).then(function () {
-      $(hiloEls.feedback).hide(0);
+      $(hiloEls.feedback).html(data.correct ? feedbackCorrect : feedbackWrong);
+      return promiseTimeout(hiloConst.FEEDBACK_TIME);
+    }).then(function() {
       $(hiloEls.feedback).html("");
+      hideAll(hiloEls);
       resolve(data);
     });
   });
@@ -292,6 +305,9 @@ function hiloFeedback(data) {
  * @returns {HiloData}
  */
 function hiloTrial(baseData) {
+
+  console.log("running hiloTrial", baseData);
+
   return displayCross().then(function () {
     return hiloGuess(baseData);
   }).then(function (data) {
@@ -312,7 +328,7 @@ function hiloBlock(numberOfTrials, currentBlock, session) {
   var trialData = [];
 
   var currentTrial = 0;
-  var points = 0;
+  var points = 2500;
 
   console.log("I am going to run a block", numberOfTrials, currentBlock, session);
 
@@ -367,7 +383,14 @@ function hiloBlocks(numberOfBlocks, numberOfTrials, session) {
         hiloBlock(numberOfTrials, currentBlock, session).then(function (data) {
           blockData = blockData.concat(data);
           currentBlock++;
-          execBlock();
+
+          hideAll(hiloEls);
+          $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
+          waitLeftOrRight().then(function() {
+            $(hiloEls.feedback).html("");
+            $(hiloEls.feedback).hide(0);
+            execBlock();
+          });
         });
       }
     }
@@ -392,10 +415,48 @@ function HiLoExperiment() {
   /** @type {HiloData[]} */
   var expData = [];
 
+  var introText = "Keep your eyes at the center of the screen.<br>"+
+    "You will see two cards: a numbered card (1-9) and a mystery card (\"?\").<br>"+
+    "Then you will be asked to decide whether the value of the mystery card is "+
+    "lower or higher than the numbered card; the mystery card's value will never "+
+    "be equal to the numbered card.<br>Press &larr; (left), if you think the mystery card "+
+    "is lower than the numbered card, or &rarr; (right), if you think the mystery card "+
+    "is higher than the numbered card.<br><br>After"+
+    "your response, the real value of the mystery card will be revealed."+
+    "Please respond as quickly and accurately as possible.<br><br>"+
+    "Press &larr; or &rarr; to continue.";
+
+  var afterIntroText = "You will start with an amount of 2500 points.<br>" + 
+    "For each correct answer, you win 100 points. For each wrong anwer, you lose 100 points.<br><br>" + 
+    "Press &larr; or &rarr; to begin the task.";
+
   psiTurk.showPage("exp/hiloStage.html");
 
   // return hiloBlock(4, 0, 0);
-  return hiloBlocks(1, 2, 0);
+  hideAll(hiloEls);
+  $(hiloEls.feedback).html(introText);
+  $(hiloEls.feedback).show(0);
+  return waitLeftOrRight().then(function() {
+    $(hiloEls.feedback).html(afterIntroText);
+    return waitLeftOrRight();
+  }).then(function() {
+    $(hiloEls.feedback).html("");
+    hideAll(hiloEls);
+    return hiloBlocks(1, 9, 0);
+  }).then(function(data) {
+    expData = expData.concat(data);
+    hideAll(hiloEls);
+    $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
+    return waitLeftOrRight();
+  }).then(function() {
+    $(hiloEls.feedback).html("");
+    hideAll(hiloEls);
+    return hiloBlocks(6, 18, 1);
+  }).then(function(data) {
+    expData = expData.concat(data);
+
+    return expData;
+  });
 
   // return hiloBlocks(1, 9, 0).then(function(data) {
   //     hiloData = hiloData.concat(data);
