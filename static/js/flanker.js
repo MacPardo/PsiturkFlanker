@@ -1,5 +1,25 @@
  
 /**
+ * @typedef {FlankerBaseData}
+ * @property {Number} Session 0 or 1
+ * @property {Number} Block
+ * @property {Number} Trial
+ */
+
+/**
+ * @typedef {FlankerData}
+ * @property {Number} Session 0 or 1
+ * @property {Number} Block
+ * @property {Number} Trial
+ * @property {Number} Condition 0 (coherent) or 1 (incoherent)
+ * @property {Number} TargetDirection 0 (left) or 1 (right)
+ * @property {Number} FlankerDirection 0 (left) or 1 (right)
+ * @property {Number} RT Response Time (delay)
+ * @property {Number} Resp 0 (timeout) or 1 (tried)
+ * @property {Number} Correct 0 or 1
+ */
+
+/**
  * 
  * @param {Number} nTrials 
  * @param {Object} additionalData
@@ -81,6 +101,42 @@ var runFlankerBlock = function(nTrials, additionalData) {
     execTrial();
 
   });
+}
+
+/**
+ * 
+ * @param {Number} numberOfBlocks 
+ * @param {Number} numberOfTrials 
+ * @param {Number} Session 0 or 1
+ * @returns {Promise} 
+ */
+function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
+  var currentBlock = 0;
+  var blockData = [];
+
+  return new Promise(function(resolve) {
+    function execBlock() {
+      if (currentBlock >= numberOfBlocks) {
+        resolve(blockData);
+      } else {
+        runFlankerBlock(numberOfTrials, {Session: Session, Block: currentBlock}).then(function(data) {
+          currentBlock++;
+          blockData = blockData.concat(data);
+  
+          if (currentBlock < numberOfBlocks - 1) {
+            // if it's not the last block, display feedback message
+          } else {
+            execBlock();
+          }
+        });
+      }
+    }
+    execBlock();
+  });
+}
+
+function flankerFeedback(data) {
+
 }
 
 var FlankerExperiment = function() {
