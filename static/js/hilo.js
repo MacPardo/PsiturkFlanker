@@ -1,5 +1,7 @@
 'use strict';
 
+console.log("LOADED HILO SCRIPT");
+
 var hiloConst = {
   CARD_MIN: 1,
   CARD_MAX: 9,

@@ -82,6 +82,17 @@ function DelayedInput() {
   return self;
 }
 
+/**
+ * @typedef {Object} DirectionPair
+ * @property {Number} target 0 (left) or 1 (right)
+ * @property {Number} flanker 0 (left) or 1 (right)
+ */
+
+/**
+ * 
+ * @param {DirectionPair} dir
+ * @returns {String} 
+ */
 function dirPairToStr(dir) {
   var mainChar      = dir.target === 0 ? '<' : '>';
   var secondaryChar = dir.flanker === 0 ? '<' : '>';

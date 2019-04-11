@@ -1,13 +1,17 @@
- 
+'use strict';
+
+
 /**
- * @typedef {FlankerBaseData}
+ * @typedef {Object} FlankerBaseData
  * @property {Number} Session 0 or 1
  * @property {Number} Block
  * @property {Number} Trial
+ * @property {Number} TargetDirection
+ * @property {Number} FlankerDirection
  */
 
 /**
- * @typedef {FlankerData}
+ * @typedef {Object} FlankerData
  * @property {Number} Session 0 or 1
  * @property {Number} Block
  * @property {Number} Trial
@@ -19,21 +23,71 @@
  * @property {Number} Correct 0 or 1
  */
 
+var flankerConst = {
+  arrowDurS: 0.2,
+  ITIMinS: 1.4,
+  ITIMaxS: 1.6    
+}
+
+
 /**
  * 
- * @param {Number} nTrials 
- * @param {Object} additionalData
+ * @param {FlankerBaseData} baseData
+ * @returns {Promise<FlankerData>}
  */
-var runFlankerBlock = function(nTrials, additionalData) {
+function runFlankerTrial(baseData) {
+  var listener = DelayedInput();
+  var str = dirPairToStr({
+    flanker: baseData.FlankerDirection, 
+    target: baseData.TargetDirection
+  });
+  var divHTML = "<div style='font-size: 44px;'>" + str + "</div>";
+  $("#stim").html(divHTML);
+  
+  listener.listen();
+
+  return promiseTimeout(flankerConst.arrowDurS * 1000).then(function() {
+    $("#stim").html("");
+    return promiseTimeout(boundedRandomFloat(flankerConst.ITIMinS, flankerConst.ITIMaxS) * 1000);
+  }).then(function() {
+    var result = listener.result();
+
+    /** @type {FlankerData} */
+    var data = {
+      Session: baseData.Session,
+      Block: baseData.Block,
+      Trial: baseData.Trial,
+      Condition: (baseData.FlankerDirection !== baseData.TargetDirection) ? 1 : 0,
+      RT: result.delay,
+      Resp: result.inputHappened ? 0 : 1,
+      FlankerDirection: baseData.FlankerDirection,
+      TargetDirection: baseData.TargetDirection,
+      Correct: (baseData.TargetDirection === 0 && result.keyCode === LEFT_KEY_CODE ||
+        baseData.TargetDirection === 1 && result.keyCode === RIGHT_KEY_CODE) ? 1 : 0
+    };
+
+    return data;
+  });
+}
+
+/**
+ * 
+ * @param {Number} Session 0 or 1
+ * @param {Number} CurrentBlock 
+ * @param {Number} numberOfTrials
+ * @returns {Promise<FlankerData[]>}
+ */
+var runFlankerBlock = function(Session, CurrentBlock, numberOfTrials) {
   var arrowDurS = 0.2;
   var ITIMinS = 1.4;
   var ITIMaxS = 1.6;
   
-  var nCoherentTrials = parseInt(nTrials / 2);
-  var nIncoherentTrials = parseInt(nTrials / 2);
+  var nCoherentTrials = parseInt(numberOfTrials / 2);
+  var nIncoherentTrials = parseInt(numberOfTrials / 2);
   
-  
+  /** @type {DirectionPair[]} */
   var trialDir = [];
+
   for (var i = 0; i < nCoherentTrials + nIncoherentTrials; i++) {
     var dir = _.random(0, 1);
     trialDir.push({
@@ -43,11 +97,42 @@ var runFlankerBlock = function(nTrials, additionalData) {
   }
   trialDir = _.shuffle(trialDir);
   
-  var listener = DelayedInput(); // utils.js
   var trialData = [];
+  
+  var currentTrial = 0;
 
   var correctHits = 0;
 
+  return new Promise(function(resolve) {
+    function execTrial() {
+      if (currentTrial >= trialDir.length) {
+        console.log("finished a block", trialData);
+        console.log("correct hits", correctHits);
+        resolve(trialData);
+        return;
+      }
+
+      runFlankerTrial({
+        Block: CurrentBlock,
+        Session: Session,
+        Trial: currentTrial,
+        FlankerDirection: trialDir[currentTrial].flanker,
+        TargetDirection: trialDir[currentTrial].target
+      }).then(function(data) {
+        currentTrial++;
+        trialData.push(data);
+
+        if (data.Correct) {
+          correctHits++;
+        }
+
+        execTrial();
+      });
+    }
+    execTrial();
+  });
+
+  /*
   return new Promise(function(resolve, reject) {
     function execTrial() {
       if (trialDir.length > 0) {
@@ -100,7 +185,7 @@ var runFlankerBlock = function(nTrials, additionalData) {
   
     execTrial();
 
-  });
+  });*/
 }
 
 /**
@@ -177,6 +262,25 @@ var FlankerExperiment = function() {
   // First run a practice session
   $("#query").html(instructionText);
 
+  console.log("testandoooooooo");
+  // return runFlankerBlock(0, 0, 4);
+  return runFlankerTrial({
+    Block: 0,
+    FlankerDirection: 1,
+    TargetDirection: 0,
+    Session: 1,
+    Trial: 0
+  }).then(function() {
+    return runFlankerTrial({
+      Block: 0,
+      FlankerDirection: 0,
+      TargetDirection: 0,
+      Session: 1,
+      Trial: 0
+    });
+  });
+
+  /*
   return new Promise(function(resolve) {
     function startFlanker(event) {
       console.log("start flanker!!!!!!", event);
@@ -249,6 +353,7 @@ var FlankerExperiment = function() {
     window.addEventListener('keydown', startFlanker);
 
   });
+  */
 
 };
 /********************
