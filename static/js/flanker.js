@@ -26,7 +26,10 @@
 var flankerConst = {
   arrowDurS: 0.2,
   ITIMinS: 1.4,
-  ITIMaxS: 1.6    
+  ITIMaxS: 1.6,
+  pauseText: "Take a rest.<br>" +
+    "When you are ready, press &larr; (left arrow) " +
+    "or &rarr; (right arrow) to continue"
 }
 
 
@@ -58,7 +61,7 @@ function runFlankerTrial(baseData) {
       Block: baseData.Block,
       Trial: baseData.Trial,
       Condition: (baseData.FlankerDirection !== baseData.TargetDirection) ? 1 : 0,
-      RT: result.delay,
+      RT: result.delay / 1000,
       Resp: result.inputHappened ? 0 : 1,
       FlankerDirection: baseData.FlankerDirection,
       TargetDirection: baseData.TargetDirection,
@@ -78,9 +81,10 @@ function runFlankerTrial(baseData) {
  * @returns {Promise<FlankerData[]>}
  */
 var runFlankerBlock = function(Session, CurrentBlock, numberOfTrials) {
-  var arrowDurS = 0.2;
-  var ITIMinS = 1.4;
-  var ITIMaxS = 1.6;
+
+  if (numberOfTrials % 2 != 0) {
+    console.error("FLANKER: NUMBER OF TRIALS SHOULD BE EVEN (" + numberOfTrials + ")");
+  }
   
   var nCoherentTrials = parseInt(numberOfTrials / 2);
   var nIncoherentTrials = parseInt(numberOfTrials / 2);
@@ -201,15 +205,25 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
 
   return new Promise(function(resolve) {
     function execBlock() {
+      console.log("running exec blocks. currentBlock =", currentBlock, "numberOfBlocks =", numberOfBlocks);
       if (currentBlock >= numberOfBlocks) {
         resolve(blockData);
       } else {
-        runFlankerBlock(numberOfTrials, {Session: Session, Block: currentBlock}).then(function(data) {
+        runFlankerBlock(Session, currentBlock, numberOfTrials).then(function(data) {
+          console.log("A flanker block should have just finished");
+          console.log("numberOfTrials", numberOfTrials);
+
           currentBlock++;
           blockData = blockData.concat(data);
   
           if (currentBlock < numberOfBlocks - 1) {
             // if it's not the last block, display feedback message
+
+            $("#query").html(flankerConst.pauseText);
+            waitLeftOrRight().then(function() {
+              $("#query").html("");
+              execBlock();
+            });
           } else {
             execBlock();
           }
@@ -261,24 +275,33 @@ var FlankerExperiment = function() {
 
   // First run a practice session
   $("#query").html(instructionText);
+  return waitLeftOrRight().then(function() {
+    $("#query").html(
+      "First you will take some practice trials<br>"+
+      "When the practice block is over, the real task will begin<br><br>"+
+      "Press &larr; or &rarr; to continue."
+    );
+    return waitLeftOrRight();
+  }).then(function() {
+    $("#query").html("");
+    return runFlankerBlock(0, 0, 4)
+  }).then(function(data) {
+    experimentData = experimentData.concat(data);
+    $("#query").html("Now that the training is over, the test will begin<br><br>"+
+      "Press &larr; or &rarr; to continue.");
+    return waitLeftOrRight();
+  }).then(function() {
+    $("#query").html("");
+    return runFlankerBlocks(4, 4, 1);
+  }).then(function(data) {
+    experimentData = experimentData.concat(data);
+
+    return experimentData;
+  });
 
   console.log("testandoooooooo");
   // return runFlankerBlock(0, 0, 4);
-  return runFlankerTrial({
-    Block: 0,
-    FlankerDirection: 1,
-    TargetDirection: 0,
-    Session: 1,
-    Trial: 0
-  }).then(function() {
-    return runFlankerTrial({
-      Block: 0,
-      FlankerDirection: 0,
-      TargetDirection: 0,
-      Session: 1,
-      Trial: 0
-    });
-  });
+  return runFlankerBlock(0, 0, 10);
 
   /*
   return new Promise(function(resolve) {
