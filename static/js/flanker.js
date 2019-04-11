@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  * @typedef {Object} FlankerBaseData
  * @property {Number} Session 0 or 1

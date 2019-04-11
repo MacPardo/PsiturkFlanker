@@ -37,7 +37,8 @@ var pages = [
   "exp/demographic.html",
   "exp/YBOCS.html",
   "exp/phqGad.html",
-  "exp/hiloStage.html"
+  "exp/hiloStage.html",
+  "exp/review.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -98,11 +99,31 @@ var EndExperiment = function() {
 // Task object to keep track of the current phase
 var currentview;
 
+/**
+ * @returns {Promise}
+ */
+function showDataReview() {
+  psiTurk.showPage("exp/review.html");
+
+  $("#review-tables").html("")
+  for (var data in GLOBAL_DATA) {
+    $("#review-tables").html(
+      $("#review-tables").html() +
+      "<h3>" + data + "</h3>" +
+      objArray2Table(GLOBAL_DATA[data]));
+  }
+}
+
 /*******************
  * Run Task
  ******************/
 $(window).load(function() {
 
-  FlankerExperiment();
+  RunForm("exp/OCI-R.html", "ocir").then(function() {
+    return FlankerExperiment();
+  }).then(function(data) {
+    GLOBAL_DATA["flanker"] = data;
+    return showDataReview();
+  });
   // HiLoExperiment();
 });
