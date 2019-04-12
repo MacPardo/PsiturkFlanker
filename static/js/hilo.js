@@ -154,25 +154,26 @@ function displayCross() {
 /**
  * @typedef  {Object} HiloBaseData
  * @property {Number} totalPoints
- * @property {Number} trial
- * @property {Number} block
- * @property {Number} session 0 or 1
+ * @property {Number} Trial
+ * @property {Number} Block
+ * @property {Number} Session 0 or 1
  */
 
 /**
  * @typedef  {Object} HiloData
- * @property {Number} delay
- * @property {Number} correct 0 or 1
- * @property {Number} tried 0 or 1
- * @property {Number} visibleNumber
- * @property {Number} hiddenNumber
+ * @property {Number} RT
+ * @property {Number} Correct 0 or 1
+ * @property {Number} Resp 0 or 1
+ * @property {Number} numberCardValue
+ * @property {Number} misteryCardValue
  * @property {Number} keyPressed 0 (left) or 1 (right)
  * @property {Number} stimDuration
  * @property {Number} pointDiff
  * @property {Number} totalPointsBefore
  * @property {Number} totalPointsAfter
- * @property {Number} trial
- * @property {Number} block
+ * @property {Number} Trial
+ * @property {Number} Block
+ * @property {Number} Session 0 or 1
  */
 
 /**
@@ -231,19 +232,19 @@ function hiloGuess(baseData) {
 
     /** @type {HiloData} */
     var data = {
-      delay: result.delay / 1000,
-      correct: correct,
-      tried: result.inputHappened ? 1 : 0,
-      visibleNumber: visibleNum,
-      hiddenNumber: hiddenNum,
+      RT: result.delay / 1000,
+      Correct: correct,
+      Resp: result.inputHappened ? 1 : 0,
+      numberCardValue: visibleNum,
+      misteryCardValue: hiddenNum,
       keyPressed: keyPressed,
       stimDuration: stimDur / 1000,
       pointDiff: pointDiff,
       totalPointsBefore: baseData.totalPoints,
       totalPointsAfter: baseData.totalPoints + pointDiff,
-      trial: baseData.trial,
-      block: baseData.block,
-      session: baseData.session
+      Trial: baseData.Trial,
+      Block: baseData.Block,
+      Session: baseData.Session
     };
 
     // Object.assign(data, baseData);
@@ -289,9 +290,9 @@ function hiloFeedback(data) {
 
   return new Promise(function (resolve) {
     $(hiloEls.feedback).show(0);
-    $(hiloEls.feedback).html(data.correct ? correctImg : wrongImg);
+    $(hiloEls.feedback).html(data.Correct ? correctImg : wrongImg);
     promiseTimeout(hiloConst.FEEDBACK_TIME).then(function () {
-      $(hiloEls.feedback).html(data.correct ? feedbackCorrect : feedbackWrong);
+      $(hiloEls.feedback).html(data.Correct ? feedbackCorrect : feedbackWrong);
       return promiseTimeout(hiloConst.FEEDBACK_TIME);
     }).then(function() {
       $(hiloEls.feedback).html("");
@@ -344,10 +345,10 @@ function hiloBlock(numberOfTrials, currentBlock, session) {
 
         /** @type {HiloBaseData} */
         var baseData = {
-          block: currentBlock,
+          Block: currentBlock,
           totalPoints: points,
-          trial: currentTrial,
-          session: session
+          Trial: currentTrial,
+          Session: session
         };
 
         hiloTrial(baseData).then(function (data) {
@@ -440,7 +441,9 @@ function HiLoExperiment() {
     "Press &larr; or &rarr; to continue.";
 
   var afterIntroText = "You will start with an amount of 2500 points.<br>" + 
-    "For each correct answer, you win 100 points. For each wrong anwer, you lose 100 points.<br><br>" + 
+    "For each correct answer, you win 100 points. For each wrong anwer, you lose 100 points.<br><br>" +
+    "First you will take some practice trials<br>"+
+    "When the practice block is over, the real task will begin<br><br>"+ 
     "Press &larr; or &rarr; to begin the task.";
 
   psiTurk.showPage("exp/hiloStage.html");
@@ -455,7 +458,8 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(1, 9, 0);
+    // return hiloBlocks(1, 9, 0);
+    return hiloBlocks(1, 1, 0);
   }).then(function(data) {
     console.log("I got to the other side of the promise");
     expData = expData.concat(data);
@@ -466,7 +470,8 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(6, 18, 1);
+    // return hiloBlocks(6, 18, 1);
+    return hiloBlocks(2, 1, 1);
   }).then(function(data) {
 
     console.log("finished all blocks");

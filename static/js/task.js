@@ -127,9 +127,9 @@ $(window).load(function() {
   }).then(function() {
     return RunForm("exp/YBOCS.html", "ybocs");
   }).then(function(){
-    return FlankerExperiment();
+    return HiLoExperiment();
   }).then(function(data) {
-    GLOBAL_DATA["flanker"] = data;
+    GLOBAL_DATA["hilo"] = data;
     return showDataReview();
   });
   // HiLoExperiment();
