@@ -20,6 +20,7 @@
  * @property {Number} RT Response Time (delay)
  * @property {Number} Resp 0 (timeout) or 1 (tried)
  * @property {Number} Correct 0 or 1
+ * @property {Number} BlockPrecision
  */
 
 var flankerConst = {
@@ -100,6 +101,7 @@ var runFlankerBlock = function(Session, CurrentBlock, numberOfTrials) {
   }
   trialDir = _.shuffle(trialDir);
   
+  /** @type {FlankerData[]} */
   var trialData = [];
   
   var currentTrial = 0;
@@ -111,6 +113,11 @@ var runFlankerBlock = function(Session, CurrentBlock, numberOfTrials) {
       if (currentTrial >= trialDir.length) {
         console.log("finished a block", trialData);
         console.log("correct hits", correctHits);
+
+        trialData.forEach(function(data) {
+          data.BlockPrecision = correctHits / numberOfTrials;
+        });
+
         resolve(trialData);
         return;
       }
@@ -163,11 +170,15 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
           if (currentBlock < numberOfBlocks - 1) {
             // if it's not the last block, display feedback message
 
-            $("#query").html(flankerConst.pauseText);
-            waitLeftOrRight().then(function() {
+            flankerFeedback(blockData).then(function() {
               $("#query").html("");
               execBlock();
             });
+            // $("#query").html(flankerConst.pauseText);
+            // waitLeftOrRight().then(function() {
+            //   $("#query").html("");
+            //   execBlock();
+            // });
           } else {
             execBlock();
           }
@@ -178,8 +189,29 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
   });
 }
 
+/**
+ * Receives the data of a block
+ * @param {FlankerData} data
+ * @returns {Promise}
+ */
 function flankerFeedback(data) {
+  var lowAccText = "Try to answer more correctly.";
+  var highAccText = "Try to answer more quickly.";
+  var midAccText = "You are going very well!";
 
+  if (data[0].BlockPrecision <= 0.75) {
+    var msg = lowAccText;
+  } else if (data[0].BlockPrecision < 90) {
+    var msg = midAccText;
+  } else {
+    var msg = highAccText;
+  }
+
+  $("#query").html(msg);
+
+  return promiseTimeout(2000).then(function() {
+    $("#query").html("");
+  });
 }
 
 var FlankerExperiment = function() {
@@ -201,9 +233,6 @@ var FlankerExperiment = function() {
     "Or &rarr; (right arrow) to continue";
   var practiceEndText = "You have finished the practice block. Press any key to start the task.";
   var endText = "Thank you for participating in this research!<br><br>";
-  var lowAccText = "Try to answer more correctly.";
-  var highAccText = "Try to answer more quickly.";
-  var midAccText = "You are going very well!";
 
   var endText = "Thank you for participating in this research!<br><br>"+
     "Please don't close the window until data is saved<br>"+
@@ -228,7 +257,7 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    return runFlankerBlock(0, 0, 4)
+    return runFlankerBlock(0, 0, 20);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
     $("#query").html("Now that the training is over, the test will begin<br><br>"+
@@ -236,7 +265,7 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    return runFlankerBlocks(4, 4, 1);
+    return runFlankerBlocks(4, 32, 1);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
 

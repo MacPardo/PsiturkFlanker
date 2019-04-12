@@ -38,7 +38,8 @@ var pages = [
   "exp/YBOCS.html",
   "exp/phqGad.html",
   "exp/hiloStage.html",
-  "exp/review.html"
+  "exp/review.html",
+  "exp/saving.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -87,6 +88,9 @@ var RunForm = function(formPage, formName) {
 }
 
 var EndExperiment = function() {
+  psiTurk.showPage("exp/saving.html");
+  console.log("global is", GLOBAL_DATA);
+
   return new Promise(function(resolve) {
     psiTurk.recordTrialData(GLOBAL_DATA);
     psiTurk.saveData({
@@ -113,13 +117,23 @@ function showDataReview() {
       "<h3>" + data + "</h3>" +
       objArray2Table(GLOBAL_DATA[data]));
   }
+
+  var button = $("#review button");
+  console.log("button is", button);
+
+  return new Promise(function(resolve) {
+    $("#review button").click(function() {
+      console.log("button clicked");
+      resolve();
+    });
+  })
 }
 
 /*******************
  * Run Task
  ******************/
 $(window).load(function() {
-
+  
   RunForm("exp/OCI-R.html", "ocir").then(function() {
     return RunForm("exp/phqGad.html", "phqgad");
   }).then(function() {
@@ -127,10 +141,15 @@ $(window).load(function() {
   }).then(function() {
     return RunForm("exp/YBOCS.html", "ybocs");
   }).then(function(){
+    return FlankerExperiment();
+  }).then(function(data) {
+    GLOBAL_DATA["flanker"] = data;
     return HiLoExperiment();
   }).then(function(data) {
     GLOBAL_DATA["hilo"] = data;
     return showDataReview();
+  }).then(function() {
+    EndExperiment();
   });
   // HiLoExperiment();
 });

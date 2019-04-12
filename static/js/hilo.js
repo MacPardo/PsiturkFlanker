@@ -458,20 +458,22 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    // return hiloBlocks(1, 9, 0);
-    return hiloBlocks(1, 1, 0);
+    return hiloBlocks(1, 9, 0);
+    // return hiloBlocks(1, 1, 0);
   }).then(function(data) {
     console.log("I got to the other side of the promise");
     expData = expData.concat(data);
     hideAll(hiloEls);
     $(hiloEls.feedback).show(0);
-    $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
+    // $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
+    $(hiloEls.feedback).html("Now that the training is over, the test will begin<br><br>"+
+    "Press &larr; or &rarr; to continue.");
     return waitLeftOrRight();
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    // return hiloBlocks(6, 18, 1);
-    return hiloBlocks(2, 1, 1);
+    return hiloBlocks(6, 18, 1);
+    // return hiloBlocks(2, 1, 1);
   }).then(function(data) {
 
     console.log("finished all blocks");
