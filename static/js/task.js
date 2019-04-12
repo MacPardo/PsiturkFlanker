@@ -73,6 +73,7 @@ var flankerInstructionPages = [
 
 var RunForm = function(formPage, formName) {
   psiTurk.showPage(formPage);
+  $("html,body").animate({scrollTop: 0}, 0);
 
   var form = $("#" + formName).find("form");
 
@@ -120,6 +121,12 @@ function showDataReview() {
 $(window).load(function() {
 
   RunForm("exp/OCI-R.html", "ocir").then(function() {
+    return RunForm("exp/phqGad.html", "phqgad");
+  }).then(function() {
+    return RunForm("exp/demographic.html", "demographic");
+  }).then(function() {
+    return RunForm("exp/YBOCS.html", "ybocs");
+  }).then(function(){
     return FlankerExperiment();
   }).then(function(data) {
     GLOBAL_DATA["flanker"] = data;
