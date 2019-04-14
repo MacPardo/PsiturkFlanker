@@ -282,7 +282,7 @@ lembrar de salvar a pontuação
  */
 function hiloFeedback(data) {
   
-  var wrongImg = "<img src='/static/images/error-128.png' />";
+  var wrongImg = "<img src='/static/images/error-128.ico' />";
   var correctImg = "<img src='/static/images/ok-128.png' />";
 
   var feedbackCorrect = "Correct!<br>+100 points.<br>Total = " + data.totalPointsAfter;

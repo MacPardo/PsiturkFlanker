@@ -39,7 +39,8 @@ var pages = [
   "exp/phqGad.html",
   "exp/hiloStage.html",
   "exp/review.html",
-  "exp/saving.html"
+  "exp/saving.html",
+  "exp/IUS-12.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -134,12 +135,16 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
+  // return HiLoExperiment();
+
   RunForm("exp/OCI-R.html", "ocir").then(function() {
     return RunForm("exp/phqGad.html", "phqgad");
   }).then(function() {
     return RunForm("exp/demographic.html", "demographic");
   }).then(function() {
     return RunForm("exp/YBOCS.html", "ybocs");
+  }).then(function() {
+    return RunForm("exp/IUS-12.html", "ius12");
   }).then(function(){
     return FlankerExperiment();
   }).then(function(data) {
