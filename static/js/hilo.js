@@ -325,7 +325,7 @@ function hiloTrial(baseData) {
  * @param {Number} session 0 or 1
  * @returns {Promise<HiloData[]>}
  */
-function hiloBlock(numberOfTrials, currentBlock, session) {
+function hiloBlockBasic(numberOfTrials, currentBlock, session) {
 
   /** @type {HiloData[]} */
   var trialData = [];
@@ -360,6 +360,22 @@ function hiloBlock(numberOfTrials, currentBlock, session) {
       }
     }
     execTrial();
+  });
+}
+
+
+/**
+ * The same as hiloBlockBasic, but with countdown first
+ * @param {Number} numberOfTrials
+ * @param {Number} currentBlock
+ * @param {Number} session 0 or 1
+ * @returns {Promise<HiloData[]>}
+ */
+function hiloBlock(numberOfTrials, currentBlock, session) {
+  hideAll(hiloEls);
+  $(hiloEls.feedback).show(0);
+  return blockCountdown($(hiloEls.feedback)).then(function() {
+    return hiloBlockBasic(numberOfTrials, currentBlock, session);
   });
 }
 
@@ -438,6 +454,14 @@ function HiLoExperiment() {
     "is higher than the numbered card.<br><br>After"+
     "your response, the real value of the mystery card will be revealed."+
     "Please respond as quickly and accurately as possible.<br><br>"+
+    "9 ?<br>\
+    In this trial, the right answer is to press < (left), i.e., the mystery card certainly is lower than 9.<br><br>\
+    1 ?<br>\
+    In this trial, the right answer is to press < (right), i.e., the mystery card certainly is higher than 1.<br><br>\
+    5 ?<br>\
+    3 ?<br>\
+    8 ?<br>\
+    In these trials, although there are odds involved, you will have to guess.<br><br>"+
     "Press &larr; or &rarr; to continue.";
 
   var afterIntroText = "You will start with an amount of 2500 points.<br>" + 
@@ -458,8 +482,8 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(1, 9, 0);
-    // return hiloBlocks(1, 1, 0);
+    // return hiloBlocks(1, 9, 0);
+    return hiloBlocks(1, 1, 0);
   }).then(function(data) {
     console.log("I got to the other side of the promise");
     expData = expData.concat(data);
@@ -472,8 +496,8 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(6, 18, 1);
-    // return hiloBlocks(2, 1, 1);
+    // return hiloBlocks(6, 18, 1);
+    return hiloBlocks(2, 1, 1);
   }).then(function(data) {
 
     console.log("finished all blocks");

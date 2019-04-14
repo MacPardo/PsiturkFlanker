@@ -139,7 +139,8 @@ var runFlankerBlock = function(Session, CurrentBlock, numberOfTrials) {
         execTrial();
       });
     }
-    execTrial();
+    blockCountdown("#query").then(execTrial);
+    // execTrial();
   });
 }
 
@@ -207,9 +208,9 @@ function flankerFeedback(data) {
     var msg = highAccText;
   }
 
-  $("#query").html(msg);
+  $("#query").html(msg + "<br><br>Press &larr; or &rarr; to continue.");
 
-  return promiseTimeout(2000).then(function() {
+  return waitLeftOrRight().then(function() {
     $("#query").html("");
   });
 }
@@ -222,11 +223,24 @@ var FlankerExperiment = function() {
     "(left) everytime the central arrow points to LEFT and <br>"+
     "&rarr; (right) when it points to RIGHT.<br><br>"+
     "Please respond as quickly and accurately as possible.<br><br>" +
-    "Press &larr; or &rarr; to start.";
+    "The congruent condition would be:<br>"+
+    "<span style='font-size: 36px;'>&lt;&lt;&lt;&lt;&lt;</span><br>"+
+    "In this trial the right answer is to press &larr; (left)<br>"+
+    "The incongruent condition would be:<br>"+
+    "<span style='font-size: 36px;'>&lt;&lt;&gt;&lt;&lt;</span><br>"+
+    "In this trial the right answer is to press &rarr; (right)<br><br>"+
+    "Press &larr; or &rarr; to continue.";
+  var exampleText = "The congruent condition would be:<br>"+
+    "<span style='font-size: 36px;'>&lt;&lt;&lt;&lt;&lt;</span><br>"+
+    "In this trial the right answer is to press &larr; (left)<br>"+
+    "The incongruent condition would be:<br>"+
+    "<span style='font-size: 36px;'>&lt;&lt;&gt;&lt;&lt;</span><br>"+
+    "In this trial the right answer is to press &rarr; (right)<br><br>"+
+    "Press &larr; or &rarr; to continue.";
   var pauseText =  
     "Take a rest.<br>" +
     "When you are ready, press &larr; (left arrow)<br>" +
-    "or &rarr; (right arrow) to continue";
+    "or &rarr; (right arrow) to continue.";
   var longPauseText =   
     "Take a rest.<br><br>"+
     "Press &larr; (left arrow)<br>"+
@@ -257,7 +271,8 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    return runFlankerBlock(0, 0, 20);
+    // return runFlankerBlock(0, 0, 20);
+    return runFlankerBlock(0, 0, 2);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
     $("#query").html("Now that the training is over, the test will begin<br><br>"+
@@ -265,7 +280,8 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    return runFlankerBlocks(4, 32, 1);
+    // return runFlankerBlocks(4, 32, 1);
+    return runFlankerBlocks(4, 2, 1);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
 

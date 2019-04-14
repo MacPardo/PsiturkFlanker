@@ -223,3 +223,24 @@ function objArray2Table(objArray) {
   <br>
   `
 }
+
+/**
+ * @param {HTMLElement} target
+ * @returns {Promise}
+ */
+function blockCountdown(target) {
+  var msg = "The task will begin in… ";
+  var time = 1000;
+
+  $(target).html(msg + "3");
+  
+  return promiseTimeout(time).then(function() {
+    $(target).html(msg + "2");
+    return promiseTimeout(time);
+  }).then(function() {
+    $(target).html(msg + "1");
+    return promiseTimeout(time);
+  }).then(function() {
+    $(target).html("");
+  });
+}

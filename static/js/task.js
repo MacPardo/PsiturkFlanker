@@ -97,7 +97,7 @@ var EndExperiment = function() {
       success: function() {
         resolve();
       }
-    })
+    });
   });
 }
 
@@ -134,6 +134,11 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
   
+  return HiLoExperiment().then(function(data) {
+    GLOBAL_DATA["hilo"] = data;
+    return showDataReview();
+  });
+
   RunForm("exp/OCI-R.html", "ocir").then(function() {
     return RunForm("exp/phqGad.html", "phqgad");
   }).then(function() {
