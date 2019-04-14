@@ -168,7 +168,6 @@ function displayCross() {
  * @property {Number} misteryCardValue
  * @property {Number} keyPressed 0 (left) or 1 (right)
  * @property {Number} stimDuration
- * @property {Number} pointDiff
  * @property {Number} totalPointsBefore
  * @property {Number} totalPointsAfter
  * @property {Number} Trial
@@ -210,8 +209,18 @@ function hiloGuess(baseData) {
 
   var stimDur = boundedRandomFloat(hiloConst.STIM_DUR_MIN, hiloConst.STIM_DUR_MAX);
 
-  return promiseTimeout(stimDur).then(function () {
+  return promiseTimeout(stimDur).then(function() {
+
+    visibleCard.hide(0);
+    hiddenCard.hide(0);
+
+    revealCard.text("?");
+    revealCard.show(0);
+    return promiseTimeout(hiloConst.RESPONSE_SCREEN_TIME);
+
+  }).then(function () {
     var result = listener.result();
+    console.log("got input now");
 
     hiddenCard.text(hiddenNum);
 
@@ -229,6 +238,8 @@ function hiloGuess(baseData) {
     ) ? 1 : 0;
     var pointDiff = correct ? +hiloConst.TRIAL_POINTS : -hiloConst.TRIAL_POINTS;
 
+    var stimDurSeconds = stimDur / 1000;
+    stimDurSeconds = parseInt(stimDurSeconds * 1000) / 1000;
 
     /** @type {HiloData} */
     var data = {
@@ -238,8 +249,7 @@ function hiloGuess(baseData) {
       numberCardValue: visibleNum,
       misteryCardValue: hiddenNum,
       keyPressed: keyPressed,
-      stimDuration: stimDur / 1000,
-      pointDiff: pointDiff,
+      stimDuration: stimDurSeconds,
       totalPointsBefore: baseData.totalPoints,
       totalPointsAfter: baseData.totalPoints + pointDiff,
       Trial: baseData.Trial,
@@ -252,16 +262,8 @@ function hiloGuess(baseData) {
     return data;
   }).then(function (data) {
 
-    visibleCard.hide(0);
-    hiddenCard.hide(0);
-
-    revealCard.text("?");
-    revealCard.show(0);
-
-    return promiseTimeout(hiloConst.RESPONSE_SCREEN_TIME).then(function () {
-      revealCard.text(hiddenNum);
-      return promiseTimeout(hiloConst.MISTERY_CARD_TIME);
-    }).then(function () {
+    revealCard.text(hiddenNum);
+    return promiseTimeout(hiloConst.MISTERY_CARD_TIME).then(function () {
       revealCard.hide(0);
       return data;
     });
@@ -323,15 +325,16 @@ function hiloTrial(baseData) {
  * @param {Number} numberOfTrials
  * @param {Number} currentBlock
  * @param {Number} session 0 or 1
+ * @param {Number} startingPoints
  * @returns {Promise<HiloData[]>}
  */
-function hiloBlockBasic(numberOfTrials, currentBlock, session) {
+function hiloBlockBasic(numberOfTrials, currentBlock, session, startingPoints) {
 
   /** @type {HiloData[]} */
   var trialData = [];
 
   var currentTrial = 0;
-  var points = 2500;
+  var points = startingPoints;
 
   console.log("I am going to run a block", numberOfTrials, currentBlock, session);
 
@@ -369,13 +372,14 @@ function hiloBlockBasic(numberOfTrials, currentBlock, session) {
  * @param {Number} numberOfTrials
  * @param {Number} currentBlock
  * @param {Number} session 0 or 1
+ * @param {Number} startingPoints
  * @returns {Promise<HiloData[]>}
  */
-function hiloBlock(numberOfTrials, currentBlock, session) {
+function hiloBlock(numberOfTrials, currentBlock, session, startingPoints) {
   hideAll(hiloEls);
   $(hiloEls.feedback).show(0);
   return blockCountdown($(hiloEls.feedback)).then(function() {
-    return hiloBlockBasic(numberOfTrials, currentBlock, session);
+    return hiloBlockBasic(numberOfTrials, currentBlock, session, startingPoints);
   });
 }
 
@@ -392,6 +396,7 @@ function hiloBlocks(numberOfBlocks, numberOfTrials, session) {
   var blockData = [];
 
   var currentBlock = 0;
+  var currentPoints = 2500;
 
   return new Promise(function (resolve) {
     function execBlock() {
@@ -400,7 +405,9 @@ function hiloBlocks(numberOfBlocks, numberOfTrials, session) {
         console.log("I am inside hiloBlocks and I am going to resolve");
         resolve(blockData);
       } else {
-        hiloBlock(numberOfTrials, currentBlock, session).then(function (data) {
+        hiloBlock(numberOfTrials, currentBlock, session, currentPoints).then(function (data) {
+
+          currentPoints = data[data.length - 1].totalPointsAfter; // update to points at the end of block
 
           console.log("I got HERE");
 

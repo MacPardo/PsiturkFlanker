@@ -135,7 +135,10 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
-  // return HiLoExperiment();
+  return HiLoExperiment().then(function(data) {
+    GLOBAL_DATA["hilo"] = data;
+    return showDataReview();
+  });
 
   RunForm("exp/OCI-R.html", "ocir").then(function() {
     return RunForm("exp/phqGad.html", "phqgad");
