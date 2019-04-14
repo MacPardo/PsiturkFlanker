@@ -92,13 +92,11 @@ var EndExperiment = function() {
   psiTurk.showPage("exp/saving.html");
   console.log("global is", GLOBAL_DATA);
 
-  return new Promise(function(resolve) {
-    psiTurk.recordTrialData(GLOBAL_DATA);
-    psiTurk.saveData({
-      success: function() {
-        resolve();
-      }
-    });
+  psiTurk.recordTrialData(GLOBAL_DATA);
+  psiTurk.saveData({
+    success: function() {
+      psiTurk.completeHIT();
+    }
   });
 }
 
@@ -134,11 +132,6 @@ function showDataReview() {
  * Run Task
  ******************/
 $(window).load(function() {
-
-  return HiLoExperiment().then(function(data) {
-    GLOBAL_DATA["hilo"] = data;
-    return showDataReview();
-  });
 
   RunForm("exp/OCI-R.html", "ocir").then(function() {
     return RunForm("exp/phqGad.html", "phqgad");

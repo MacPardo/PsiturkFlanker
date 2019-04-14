@@ -489,8 +489,8 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    // return hiloBlocks(1, 9, 0);
-    return hiloBlocks(1, 1, 0);
+    return hiloBlocks(1, 9, 0);
+    // return hiloBlocks(1, 1, 0);
   }).then(function(data) {
     console.log("I got to the other side of the promise");
     expData = expData.concat(data);
@@ -503,8 +503,8 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    // return hiloBlocks(6, 18, 1);
-    return hiloBlocks(2, 1, 1);
+    return hiloBlocks(6, 18, 1);
+    // return hiloBlocks(2, 1, 1);
   }).then(function(data) {
 
     console.log("finished all blocks");
