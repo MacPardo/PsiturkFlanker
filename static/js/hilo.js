@@ -469,6 +469,7 @@ function HiLoExperiment() {
     <span class='mini-card'>3</span> <span class='mini-card'>?</span><hr><br>\
     <span class='mini-card'>8</span> <span class='mini-card'>?</span><br>\
     In these trials, although there are odds involved, you will have to guess.<br><br>\
+    The points you will either win or lose are only for the purpose of this task. They are virtual and they will not entail any monetary benefit.<br><br>\
     Remember: press &larr; (left), if you think the mystery card is lower than the numbered card,\
      or &rarr; (right), if you think the mystery card is higher than the numbered card.<br><br>"+
     "Press &larr; or &rarr; to continue.";

@@ -133,8 +133,9 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
-  return RunForm("exp/demographic.html", "demographic").then(function() {
-    showDataReview();
+  return HiLoExperiment().then(function(data) {
+    GLOBAL_DATA["hilo"] = data;
+    return showDataReview();
   });
 
   RunForm("exp/OCI-R.html", "ocir").then(function() {
