@@ -133,9 +133,8 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
-  return FlankerExperiment().then(function(data) {
-    GLOBAL_DATA["flanker"] = data;
-    return showDataReview();
+  return RunForm("exp/demographic.html", "demographic").then(function() {
+    showDataReview();
   });
 
   RunForm("exp/OCI-R.html", "ocir").then(function() {

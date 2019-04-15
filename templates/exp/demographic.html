@@ -16,8 +16,8 @@
             <input required type="number" name="dem-age" placeholder="Age">
         </div>
         <div class="form-group">
-            <label for="dem-dob">D.O.B</label>
-            <input required type="text" name="dem-dob" placeholder="D.O.B">
+            <label for="dem-dob">Date of Birth</label>
+            <input required type="text" name="dem-dob" placeholder="Date of Birth">
         </div>
         <div class="form-group">
             <p><strong>Marital Status:</strong> (please tick one)</p>
@@ -121,24 +121,63 @@
                 <label for="dem-ethnic-1"><input required type="radio" name="dem-ethnic" id="dem-ethnic-1" value="White"> White</label>
             </div>
             <div class="checkbox">
-                <label for="dem-ethnic-2"><input required type="radio" name="dem-ethnic" id="dem-ethnic-2" value="Mixed"> Mixed</label>
+                <label for="dem-ethnic-2"><input required type="radio" name="dem-ethnic" id="dem-ethnic-2" value="Hispanic-Latino"> Hispanic or Latino</label>
             </div>
             <div class="checkbox">
-                <label for="dem-ethnic-3"><input required type="radio" name="dem-ethnic" id="dem-ethnic-3" value="British"> British</label>
+                <label for="dem-ethnic-3"><input required type="radio" name="dem-ethnic" id="dem-ethnic-3" value="Black"> Black or African American</label>
             </div>
             <div class="checkbox">
-                <label for="dem-ethnic-4"><input required type="radio" name="dem-ethnic" id="dem-ethnic-4" value="Black or Black British"> Black or Black British</label>
+                <label for="dem-ethnic-4"><input required type="radio" name="dem-ethnic" id="dem-ethnic-4" value="Native"> Native American or American Indian</label>
             </div>
             <div class="checkbox">
-                <label for="dem-ethnic-5"><input required type="radio" name="dem-ethnic" id="dem-ethnic-5" value="Chinese or Chinese"> Chinese or Chinese</label>
-            </div>
-            <div class="checkbox">
-                <label for="dem-ethnic-6"><input required type="radio" name="dem-ethnic" id="dem-ethnic-6" value="Asian or Asian British"> Asian or Asian British</label>
+                <label for="dem-ethnic-5"><input required type="radio" name="dem-ethnic" id="dem-ethnic-5" value="Asian"> Asian / Pacific Islander</label>
             </div>
             <div class="checkbox">
                 <label for="dem-ethnic-7"><input required type="radio" name="dem-ethnic" id="dem-ethnic-7" value="Any other ethnic group (please specify)"> Any other ethnic group (please specify)</label>
             </div>
             <input type="text" placeholder="Other ethnic group" name="dem-ethnic-other">
+        </div>
+
+        <div class="form-group">
+            <p>What is your dominant hand?</p>
+            <div class="checkbox"><label for="dem-hand-1"><input required type="radio" name="dem-hand" id="dem-hand-1" value="Left"> Left</label></div>
+            <div class="checkbox"><label for="dem-hand-2"><input required type="radio" name="dem-hand" id="dem-hand-2" value="Right"> Right</label></div>
+        </div>
+
+        <div class="form-group">
+            <p>Do you have any eye or vision problem?</p>
+            <div class="checkbox"><label for="dem-vision-problem-1"><input required type="radio" name="dem-vision-problem" id="dem-vision-problem-1" value="Yes"> Yes</label></div>
+            <div class="checkbox"><label for="dem-vision-problem-2"><input required type="radio" name="dem-vision-problem" id="dem-vision-problem-2" value="No"> No</label></div>
+            <p>If yes, which vision problem?</p>
+            <input type="text" name="dem-vision-problem-specify" placeholder="Vision Problem">
+        </div>
+
+        <div class="form-group">
+            <p>If you have a vision problem, are you using your glasses or contact lenses right now?</p>
+            <div class="checkbox"><label for="dem-glasses-1"><input type="radio" name="dem-glasses" id="dem-glasses-1" value="Yes"> Yes</label></div>
+            <div class="checkbox"><label for="dem-glasses-2"><input type="radio" name="dem-glasses" id="dem-glasses-2" value="No"> No</label></div>
+        </div>
+
+        <div class="form-group">
+            <p>Do you have any diagnosed psychiatric/neurological conditions?</p>
+            <div class="checkbox"><label for="dem-neuro-1"><input required type="radio" name="dem-neuro" id="dem-neuro-1" value="Yes"> Yes</label></div>
+            <div class="checkbox"><label for="dem-neuro-2"><input required type="radio" name="dem-neuro" id="dem-neuro-2" value="No"> No</label></div>
+            <p>If yes, what is the diagnosis?</p>
+            <input type="text" name="dem-neuro-specify" placeholder="Diagnosis">
+        </div>
+
+        <div class="form-group">
+            <p>Are you being prescribed medication?</p>
+            <div class="checkbox"><label for="dem-medication-1"><input required type="radio" name="dem-medication" id="dem-medication-1" value="Yes"> Yes</label></div>
+            <div class="checkbox"><label for="dem-medication-2"><input required type="radio" name="dem-medication" id="dem-medication-2" value="No"> No</label></div>
+            <p>If yes, which medication?</p>
+            <input type="text" name="dem-medication-specify" placeholder="Which medication">
+        </div>
+
+        <div class="form-group">
+            <p>Are you currently taking the prescribed medication? (If being prescribed)</p>
+            <div class="checkbox"><label for="dem-taking-medication-1"><input type="radio" name="dem-taking-medication" id="dem-taking-medication-1" value="Yes"> Yes</label></div>
+            <div class="checkbox"><label for="dem-taking-medication-2"><input type="radio" name="dem-taking-medication" id="dem-taking-medication-2" value="No"> No</label></div>
         </div>
 
         <div class="form-group">
