@@ -490,6 +490,7 @@ function HiLoExperiment() {
     $(hiloEls.feedback).html(afterIntroText);
     return waitLeftOrRight();
   }).then(function() {
+    $(hiloEls.feedback).addClass("vertical-center");
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
     return hiloBlocks(1, 9, 0);

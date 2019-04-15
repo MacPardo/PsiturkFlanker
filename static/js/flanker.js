@@ -44,7 +44,7 @@ function runFlankerTrial(baseData) {
     flanker: baseData.FlankerDirection, 
     target: baseData.TargetDirection
   });
-  var divHTML = "<div style='font-size: 44px;'>" + str + "</div>";
+  var divHTML = "<div style='font-size: 70px;'>" + str + "</div>";
   $("#stim").html(divHTML);
   
   listener.listen();
@@ -217,7 +217,7 @@ function flankerFeedback(data) {
 
 var FlankerExperiment = function() {
 
-  var instructionText = "Keep your eyes at the center of the screen. You will see a set of arrows."+
+  var instructionText = "<br><br><br>Keep your eyes at the center of the screen. You will see a set of arrows."+
     "<br>Pay attention to the central arrow, ignoring the others.<br><br>" +
     "Using your right hand, press &larr; "+
     "(left) everytime the central arrow points to LEFT and <br>"+
@@ -263,6 +263,8 @@ var FlankerExperiment = function() {
   // First run a practice session
   $("#query").html(instructionText);
   return waitLeftOrRight().then(function() {
+    $("#query").addClass("vertical-center");
+    $("#stim").addClass("vertical-center");
     $("#query").html(
       "First you will take some practice trials<br>"+
       "When the practice block is over, the real task will begin<br><br>"+
