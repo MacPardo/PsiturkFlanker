@@ -251,7 +251,7 @@ function hiloGuess(baseData) {
       keyPressed: keyPressed,
       stimDuration: stimDurSeconds,
       totalPointsBefore: baseData.totalPoints,
-      totalPointsAfter: baseData.totalPoints + pointDiff,
+      totalPointsAfter: Math.max(0, baseData.totalPoints + pointDiff),
       Trial: baseData.Trial,
       Block: baseData.Block,
       Session: baseData.Session
@@ -461,13 +461,13 @@ function HiLoExperiment() {
     "is higher than the numbered card.<br><br>After"+
     "your response, the real value of the mystery card will be revealed."+
     "Please respond as quickly and accurately as possible.<br><br>"+
-    "9 ?<br>\
+    "<span class='mini-card'>9</span> <span class='mini-card'>?</span><br>\
     In this trial, the right answer is to press < (left), i.e., the mystery card certainly is lower than 9.<br><br>\
-    1 ?<br>\
+    <span class='mini-card'>1</span> <span class='mini-card'>?</span><br>\
     In this trial, the right answer is to press < (right), i.e., the mystery card certainly is higher than 1.<br><br>\
-    5 ?<br>\
-    3 ?<br>\
-    8 ?<br>\
+    <span class='mini-card'>5</span> <span class='mini-card'>?</span><hr><br>\
+    <span class='mini-card'>3</span> <span class='mini-card'>?</span><hr><br>\
+    <span class='mini-card'>8</span> <span class='mini-card'>?</span><br>\
     In these trials, although there are odds involved, you will have to guess.<br><br>"+
     "Press &larr; or &rarr; to continue.";
 
