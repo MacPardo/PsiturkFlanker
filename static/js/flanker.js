@@ -197,8 +197,8 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
  */
 function flankerFeedback(data) {
   var lowAccText = "Try to answer more correctly.";
-  var highAccText = "Try to answer more quickly.";
-  var midAccText = "You are going very well!";
+  var highAccText = "Try to answer more correctly.";
+  var midAccText = "Try to answer more quickly.";
 
   if (data[0].BlockPrecision <= 0.75) {
     var msg = lowAccText;

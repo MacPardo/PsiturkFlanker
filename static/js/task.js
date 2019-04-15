@@ -133,8 +133,8 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
-  return HiLoExperiment().then(function(data) {
-    GLOBAL_DATA["hilo"] = data;
+  return FlankerExperiment().then(function(data) {
+    GLOBAL_DATA["flanker"] = data;
     return showDataReview();
   });
 

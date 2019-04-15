@@ -462,13 +462,15 @@ function HiLoExperiment() {
     "your response, the real value of the mystery card will be revealed."+
     "Please respond as quickly and accurately as possible.<br><br>"+
     "<span class='mini-card'>9</span> <span class='mini-card'>?</span><br>\
-    In this trial, the right answer is to press < (left), i.e., the mystery card certainly is lower than 9.<br><br>\
+    In this trial, the right answer is to press &larr; (left), i.e., the mystery card certainly is lower than 9.<br><br>\
     <span class='mini-card'>1</span> <span class='mini-card'>?</span><br>\
-    In this trial, the right answer is to press < (right), i.e., the mystery card certainly is higher than 1.<br><br>\
+    In this trial, the right answer is to press &rarr; (right), i.e., the mystery card certainly is higher than 1.<br><br>\
     <span class='mini-card'>5</span> <span class='mini-card'>?</span><hr><br>\
     <span class='mini-card'>3</span> <span class='mini-card'>?</span><hr><br>\
     <span class='mini-card'>8</span> <span class='mini-card'>?</span><br>\
-    In these trials, although there are odds involved, you will have to guess.<br><br>"+
+    In these trials, although there are odds involved, you will have to guess.<br><br>\
+    Remember: press &larr; (left), if you think the mystery card is lower than the numbered card,\
+     or &rarr; (right), if you think the mystery card is higher than the numbered card.<br><br>"+
     "Press &larr; or &rarr; to continue.";
 
   var afterIntroText = "You will start with an amount of 2500 points.<br>" + 
