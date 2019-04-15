@@ -1,6 +1,6 @@
 <h1>Here are all your users in the database</h1>
 
 {% for person in participants: %}
-	{{ person.workerid }} &nbsp; {{ person.ipaddress }}<br />
+	<a href="/view_data_worker/{{ person.uniqueid }}">{{ person.uniqueid }}</a> &nbsp; {{ person.workerid }} &nbsp; {{ person.ipaddress }} <br />
 
 {% endfor %}

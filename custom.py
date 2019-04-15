@@ -1,6 +1,6 @@
 # this file imports custom routes into the experiment server
 
-from flask import Blueprint, render_template, request, jsonify, Response, abort, current_app
+from flask import Blueprint, render_template, request, jsonify, Response, abort, current_app, Markup
 from jinja2 import TemplateNotFound
 from functools import wraps
 from sqlalchemy import or_
@@ -55,13 +55,45 @@ def my_password_protected_route():
 # example accessing data
 #----------------------------------------------
 @custom_code.route('/view_data')
-@myauth.requires_auth
+# @myauth.requires_auth
 def list_my_data():
         users = Participant.query.all()
+        print "users:"
+        print users
+        for user in users:
+            print "user is"
+            print user.uniqueid
+            if isinstance(user, Participant):
+                print "user is instance"
 	try:
 		return render_template('list.html', participants=users)
 	except TemplateNotFound:
 		abort(404)
+
+@custom_code.route('/view_data_worker/<page_id>')
+def show_worker_data(page_id):
+    user = Participant.query.filter_by(uniqueid = page_id).all()
+    print "The user I got is"
+    print user
+
+    try:
+        return render_template('listComplete.html', participants=user)
+    except TemplateNotFound:
+        abort(404)
+    # users = Participant.query.all()
+    # target_user = None
+
+    # for user in users:
+    #     if user.uniqueid == page_id:
+    #         target_user = user
+
+    # print "the arg is"
+    # print page_id
+    # print "user is"
+    # print target_user
+    # print target_user.uniqueid
+
+    abort(404)
 
 #----------------------------------------------
 # example computing bonus
