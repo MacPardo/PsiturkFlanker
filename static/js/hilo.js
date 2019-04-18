@@ -37,7 +37,7 @@ var hiloConst = {
   INTRO_TEXT: "Look at the center of the screen.<br>"+
     "You'll see two cards, one with a number and another witha a question mark.",
   
-  TEXT_BETWEEN_BLOCKS: "You can take a rest now. Press &darr; or &uarr; to continue the task."
+  TEXT_BETWEEN_BLOCKS: "You can take a rest now.<br>Press &larr; or &rarr; to continue the task."
 };
 
 /** jQuery selectors */
@@ -413,16 +413,32 @@ function hiloBlocks(numberOfBlocks, numberOfTrials, session) {
 
           currentPoints = data[data.length - 1].totalPointsAfter; // update to points at the end of block
 
-          console.log("I got HERE");
+          console.log("I got HERE yay");
 
           blockData = blockData.concat(data);
           currentBlock++;
 
           hideAll(hiloEls);
 
+          console.log("===================");
+          console.log("CURRENT_BLOCK =", currentBlock);
+          console.log("NUMBER_OF_BLOCKS", numberOfBlocks);
+          console.log("===================");
+
           // só exibe a mensagem entre blocos se não for o último bloco
-          if (currentBlock < numberOfBlocks - 1) {
-            $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
+          if (currentBlock < numberOfBlocks) {
+
+            console.log("NAO EH O ULTIMO BLOCO");
+
+            if (currentBlock === numberOfBlocks - 1) {
+              // se este foi o penúltimo bloco
+              // exibir mensagem avisando que o próximo é o último
+              $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS + 
+                "<br><br>This will be the last block of this task");
+            } else {
+              $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
+            }
+
             $(hiloEls.feedback).show(0);
             waitLeftOrRight().then(function() {
               $(hiloEls.feedback).html("");
@@ -430,6 +446,7 @@ function hiloBlocks(numberOfBlocks, numberOfTrials, session) {
               execBlock();
             });
           } else {
+            console.log("EH O ULTIMO BLOCO");
             execBlock();
           }
         });
@@ -507,8 +524,8 @@ function HiLoExperiment() {
     $(hiloEls.feedback).addClass("vertical-center");
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    // return hiloBlocks(1, 9, 0);
-    return hiloBlocks(1, 1, 0);
+    return hiloBlocks(1, 9, 0);
+    // return hiloBlocks(1, 1, 0);
   }).then(function(data) {
     console.log("I got to the other side of the promise");
     expData = expData.concat(data);
@@ -516,13 +533,13 @@ function HiLoExperiment() {
     $(hiloEls.feedback).show(0);
     // $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
     $(hiloEls.feedback).html("Now that the training is over, the test will begin<br><br>"+
-    "Press &darr; or &uarr; to continue.");
+    "Press &larr; or &rarr; to continue.");
     return waitLeftOrRight();
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    // return hiloBlocks(6, 18, 1);
-    return hiloBlocks(2, 1, 1);
+    return hiloBlocks(6, 18, 1);
+    // return hiloBlocks(3, 2, 1);
   }).then(function(data) {
 
     console.log("finished all blocks");
@@ -531,7 +548,7 @@ function HiLoExperiment() {
     $(hiloEls.feedback).show(0);
     $(hiloEls.feedback).html(
       "Thank you for participating!<br><br>"+
-      "Press &darr; or &uarr; to continue."
+      "Press &larr; or &rarr; to continue."
     );
     
     return waitLeftOrRight();

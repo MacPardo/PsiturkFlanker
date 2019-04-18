@@ -171,7 +171,7 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
           if (currentBlock < numberOfBlocks) {
             // if it's not the last block, display feedback message
 
-            flankerFeedback(blockData).then(function() {
+            flankerFeedback(blockData, true).then(function() {
               $("#query").html("");
               execBlock();
             });
@@ -193,9 +193,10 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
 /**
  * Receives the data of a block
  * @param {FlankerData} data
+ * @param {Boolean} lastBlock
  * @returns {Promise}
  */
-function flankerFeedback(data) {
+function flankerFeedback(data, lastBlock) {
   var lowAccText = "Try to answer more correctly.";
   var midAccText = "Try to answer more correctly.";
   var highAccText = "Try to answer more quickly.";
@@ -210,7 +211,8 @@ function flankerFeedback(data) {
 
   $("#query").html(
     "You can take a rest now. Remember to respond as quickly and correctly as possible.<br><br>" +
-    msg + "<br><br>Press &larr; or &rarr; to continue."
+    msg + "<br><br>Press &larr; or &rarr; to continue." + 
+    (lastBlock ? "<br><br>This will be the last block of this task" : "")
   );
 
   return waitLeftOrRight().then(function() {

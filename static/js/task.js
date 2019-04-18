@@ -133,7 +133,7 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
-  return HiLoExperiment();
+  return FlankerExperiment();
 
   RunForm("exp/OCI-R.html", "ocir").then(function() {
     return RunForm("exp/phqGad.html", "phqgad");
