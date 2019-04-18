@@ -133,26 +133,39 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
-  return FlankerExperiment();
+  var promiseList = [
+    RunForm.bind(this, "exp/phqGad.html", "phqgad"),
+    RunForm.bind(this, "exp/demographic.html", "demographic"),
+    RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
+    RunForm.bind(this, "exp/IUS-12.html", "ius12"),
+    RunForm.bind(this, "exp/OCI-R.html", "ocir"),
+    FlankerExperiment,
+    HiLoExperiment
+  ];
+  promiseList = _.shuffle(promiseList);
 
-  RunForm("exp/OCI-R.html", "ocir").then(function() {
-    return RunForm("exp/phqGad.html", "phqgad");
-  }).then(function() {
-    return RunForm("exp/demographic.html", "demographic");
-  }).then(function() {
-    return RunForm("exp/YBOCS.html", "ybocs");
-  }).then(function() {
-    return RunForm("exp/IUS-12.html", "ius12");
-  }).then(function(){
-    return FlankerExperiment();
-  }).then(function(data) {
-    GLOBAL_DATA["flanker"] = data;
-    return HiLoExperiment();
-  }).then(function(data) {
-    GLOBAL_DATA["hilo"] = data;
-    return showDataReview();
-  }).then(function() {
+  execPromiseList(promiseList).then(function() {
     EndExperiment();
   });
+
+  // RunForm("exp/OCI-R.html", "ocir").then(function() {
+  //   return RunForm("exp/phqGad.html", "phqgad");
+  // }).then(function() {
+  //   return RunForm("exp/demographic.html", "demographic");
+  // }).then(function() {
+  //   return RunForm("exp/YBOCS.html", "ybocs");
+  // }).then(function() {
+  //   return RunForm("exp/IUS-12.html", "ius12");
+  // }).then(function(){
+  //   return FlankerExperiment();
+  // }).then(function(data) {
+  //   GLOBAL_DATA["flanker"] = data;
+  //   return HiLoExperiment();
+  // }).then(function(data) {
+  //   GLOBAL_DATA["hilo"] = data;
+  //   return showDataReview();
+  // }).then(function() {
+  //   EndExperiment();
+  // });
   // HiLoExperiment();
 });

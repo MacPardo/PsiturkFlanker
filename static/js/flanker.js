@@ -292,6 +292,8 @@ var FlankerExperiment = function() {
   }).then(function(data) {
     experimentData = experimentData.concat(data);
 
+    GLOBAL_DATA["flanker"] = experimentData;
+
     return experimentData;
   });
 };
