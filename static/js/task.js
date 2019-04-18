@@ -40,7 +40,8 @@ var pages = [
   "exp/hiloStage.html",
   "exp/review.html",
   "exp/saving.html",
-  "exp/IUS-12.html"
+  "exp/IUS-12.html",
+  "exp/betweenExps.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -128,6 +129,14 @@ function showDataReview() {
   })
 }
 
+/**
+ * @returns {Promise}
+ */
+function betweenExps() {
+  psiTurk.showPage("exp/betweenExps.html");
+  return waitLeftOrRight();
+}
+
 /*******************
  * Run Task
  ******************/
@@ -147,6 +156,7 @@ $(window).load(function() {
     HiLoExperiment
   ];
   expList = _.shuffle(expList);
+  expList = [expList[0], betweenExps, expList[1]];
 
   execPromiseList(formList).then(function() {
     return execPromiseList(expList);
