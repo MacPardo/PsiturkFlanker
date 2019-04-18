@@ -133,6 +133,8 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
+  return RunForm("exp/demographic.html", "demographic");
+
   RunForm("exp/OCI-R.html", "ocir").then(function() {
     return RunForm("exp/phqGad.html", "phqgad");
   }).then(function() {

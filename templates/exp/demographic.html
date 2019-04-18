@@ -4,12 +4,23 @@
     <form action="/" method="POST">
         <div class="form-group">
             <span><strong>Sex:</strong>(please tick one)</span>
-            <label for="dem-sex-male" class="checkbox-inline">
-                <input required type="radio" name="dem-sex" value="Male" id="dem-sex-male"> Male
-            </label>
-            <label for="dem-sex-female" class="checkbox-inline">
-                <input required type="radio" name="dem-sex" value="Female" id="dem-sex-female"> Female
-            </label>
+            <div class="checkbox">
+                <label for="dem-sex-male">
+                    <input required type="radio" name="dem-sex" value="Male" id="dem-sex-male"> Male
+                </label>
+            </div>
+            <div class="checkbox">
+                <label for="dem-sex-female">
+                    <input required type="radio" name="dem-sex" value="Female" id="dem-sex-female"> Female
+                </label>
+            </div>
+            <div class="checkbox">
+                <label for="dem-sex-other">
+                    <input required type="radio" name="dem-sex" value="Other" id="dem-sex-other"> Other
+                </label>
+            </div>
+            <p>If you selected "Other", please specify</p>
+            <input type="text" name="dem-sex-other" placeholder="Other">
         </div>
         <div class="form-group">
             <label for="dem-age">Age</label>
