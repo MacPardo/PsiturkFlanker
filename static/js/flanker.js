@@ -171,10 +171,17 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
           if (currentBlock < numberOfBlocks) {
             // if it's not the last block, display feedback message
 
-            flankerFeedback(blockData, true).then(function() {
-              $("#query").html("");
-              execBlock();
-            });
+            if (currentBlock === numberOfBlocks - 1) {
+              flankerFeedback(blockData, true).then(function() {
+                $("#query").html("");
+                execBlock();
+              });
+            } else {
+              flankerFeedback(blockData, false).then(function() {
+                $("#query").html("");
+                execBlock();
+              });
+            }
             // $("#query").html(flankerConst.pauseText);
             // waitLeftOrRight().then(function() {
             //   $("#query").html("");
