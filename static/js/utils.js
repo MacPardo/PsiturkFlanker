@@ -42,8 +42,13 @@ function boundedRandomInt(low, high) {
 var LEFT_KEY_CODE  = 37;
 var RIGHT_KEY_CODE = 39;
 
-function DelayedInput() {
+var UP_KEY_CODE = 38;
+var DOWN_KEY_CODE = 40;
+
+function DelayedInput(vertical) {
   var self = {};
+
+  console.log("created DelayedInput", vertical);
   
 	var waitingForKeyPress = false;
 	var lastKeyCode = NaN;
@@ -54,8 +59,12 @@ function DelayedInput() {
 	window.addEventListener('keydown', function(event) {
 		if (
       waitingForKeyPress && 
-      (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE)
+      (
+        !vertical && (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) ||
+        vertical && (event.keyCode === DOWN_KEY_CODE || event.keyCode === UP_KEY_CODE)
+      )
     ) {
+      console.log("captured event!", event.keyCode);
       waitingForKeyPress = false;
       inputHappened = true;
 			lastKeyCode = event.keyCode;
@@ -165,6 +174,22 @@ function waitLeftOrRight() {
   return new Promise(function(resolve) {
     function fn(event) {
       if (event.keyCode === LEFT_KEY_CODE || event.keyCode === RIGHT_KEY_CODE) {
+        window.removeEventListener("keydown", fn);
+        resolve();
+      }
+    }
+    window.addEventListener("keydown", fn);
+  });
+}
+
+
+/**
+ * @returns {Promise}
+ */
+function waitUpOrDown() {
+  return new Promise(function(resolve) {
+    function fn(event) {
+      if (event.keyCode === UP_KEY_CODE || event.keyCode === DOWN_KEY_CODE) {
         window.removeEventListener("keydown", fn);
         resolve();
       }

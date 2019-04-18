@@ -37,7 +37,7 @@ var hiloConst = {
   INTRO_TEXT: "Look at the center of the screen.<br>"+
     "You'll see two cards, one with a number and another witha a question mark.",
   
-  TEXT_BETWEEN_BLOCKS: "You can take a rest now. Press &larr; or &rarr; to continue the task."
+  TEXT_BETWEEN_BLOCKS: "You can take a rest now. Press &darr; or &uarr; to continue the task."
 };
 
 /** jQuery selectors */
@@ -200,7 +200,7 @@ function hiloGuess(baseData) {
     hiddenNum = _.random(hiloConst.CARD_MIN, hiloConst.CARD_MAX);
   }
 
-  var listener = DelayedInput();
+  var listener = DelayedInput(true); // passing true means it will listen for up & down
 
   visibleCard.text(visibleNum);
   hiddenCard.text("?");
@@ -224,17 +224,19 @@ function hiloGuess(baseData) {
 
     hiddenCard.text(hiddenNum);
 
-    if (result.keyCode === LEFT_KEY_CODE) {
+    if (result.keyCode === DOWN_KEY_CODE) {
       var keyPressed = 0;
-    } else if (result.keyCode === RIGHT_KEY_CODE) {
+    } else if (result.keyCode === UP_KEY_CODE) {
       var keyPressed = 1;
     } else {
       var keyPressed = NaN;
     }
 
+    console.log("keyCode===", result.keyCode, "keyPressed===", keyPressed);
+
     var correct = (
-      (result.keyCode === LEFT_KEY_CODE && hiddenNum < visibleNum) ||
-      (result.keyCode === RIGHT_KEY_CODE && hiddenNum > visibleNum)
+      (result.keyCode === DOWN_KEY_CODE && hiddenNum < visibleNum) ||
+      (result.keyCode === UP_KEY_CODE && hiddenNum > visibleNum)
     ) ? 1 : 0;
     var pointDiff = correct ? +hiloConst.TRIAL_POINTS : -hiloConst.TRIAL_POINTS;
 
@@ -458,22 +460,24 @@ function HiLoExperiment() {
     "You will see two cards: a numbered card (1-9) and a mystery card (\"?\").<br>"+
     "Then you will be asked to decide whether the value of the mystery card is "+
     "lower or higher than the numbered card; the mystery card's value will never "+
-    "be equal to the numbered card.<br>Press &larr; (left), if you think the mystery card "+
-    "is lower than the numbered card, or &rarr; (right), if you think the mystery card "+
+    "be equal to the numbered card.<br>Press &darr; (down), if you think the mystery card "+
+    "is lower than the numbered card, or &uarr; (up), if you think the mystery card "+
     "is higher than the numbered card.<br><br>After "+
     "your response, the real value of the mystery card will be revealed."+
     "Please respond as quickly and accurately as possible.<br><br>"+
     "<span class='mini-card'>9</span> <span class='mini-card'>?</span><br>\
-    In this trial, the right answer is to press &larr; (left), i.e., the mystery card certainly is lower than 9.<br><br>\
+    In this trial, the right answer is to press &darr; (down), i.e., the mystery card certainly is lower than 9.<br><br>\
     <span class='mini-card'>1</span> <span class='mini-card'>?</span><br>\
-    In this trial, the right answer is to press &rarr; (right), i.e., the mystery card certainly is higher than 1.<br><br>\
-    <span class='mini-card'>5</span> <span class='mini-card'>?</span><hr><br>\
+    In this trial, the right answer is to press &uarr; (up), i.e., the mystery card certainly is higher than 1.<br><br>"+
+    "Press &larr; or &rarr; to continue.";
+  var introText2 = "<span class='mini-card'>5</span> <span class='mini-card'>?</span><hr><br>\
     <span class='mini-card'>3</span> <span class='mini-card'>?</span><hr><br>\
     <span class='mini-card'>8</span> <span class='mini-card'>?</span><br>\
-    In these trials, although there are odds involved, you will have to guess.<br><br>\
-    The points you will either win or lose are only for the purpose of this task. They are virtual and they will not entail any monetary benefit.<br><br>\
-    Remember: press &larr; (left), if you think the mystery card is lower than the numbered card,\
-     or &rarr; (right), if you think the mystery card is higher than the numbered card.<br><br>"+
+    In these trials you will have to guess.<br><br>"+
+    "Press &larr; or &rarr; to continue.";
+  var introText3 = "The points you will either win or lose are only for the purpose of this task. They are virtual and they will not entail any monetary benefit.<br><br>\
+    Remember: press &darr; (down), if you think the mystery card is lower than the numbered card,\
+     or &uarr; (up), if you think the mystery card is higher than the numbered card.<br><br>"+
     "Press &larr; or &rarr; to continue.";
 
   var afterIntroText = "You will start with an amount of 2500 points.<br>" + 
@@ -489,6 +493,14 @@ function HiLoExperiment() {
   $(hiloEls.feedback).html(introText);
   $(hiloEls.feedback).show(0);
   return waitLeftOrRight().then(function() {
+    $(hiloEls.feedback).html(introText2);
+    return waitLeftOrRight();
+  }).then(function() {
+    $(hiloEls.feedback).html(introText3);
+    return waitLeftOrRight();
+  }).then(function() {
+
+    // AFTER INTRO
     $(hiloEls.feedback).html(afterIntroText);
     return waitLeftOrRight();
   }).then(function() {
@@ -504,7 +516,7 @@ function HiLoExperiment() {
     $(hiloEls.feedback).show(0);
     // $(hiloEls.feedback).html(hiloConst.TEXT_BETWEEN_BLOCKS);
     $(hiloEls.feedback).html("Now that the training is over, the test will begin<br><br>"+
-    "Press &larr; or &rarr; to continue.");
+    "Press &darr; or &uarr; to continue.");
     return waitLeftOrRight();
   }).then(function() {
     $(hiloEls.feedback).html("");
@@ -519,7 +531,7 @@ function HiLoExperiment() {
     $(hiloEls.feedback).show(0);
     $(hiloEls.feedback).html(
       "Thank you for participating!<br><br>"+
-      "Press &larr; or &rarr; to continue."
+      "Press &darr; or &uarr; to continue."
     );
     
     return waitLeftOrRight();

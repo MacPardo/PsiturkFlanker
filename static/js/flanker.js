@@ -197,8 +197,8 @@ function runFlankerBlocks(numberOfBlocks, numberOfTrials, Session) {
  */
 function flankerFeedback(data) {
   var lowAccText = "Try to answer more correctly.";
-  var highAccText = "Try to answer more correctly.";
-  var midAccText = "Try to answer more quickly.";
+  var midAccText = "Try to answer more correctly.";
+  var highAccText = "Try to answer more quickly.";
 
   if (data[0].BlockPrecision <= 0.75) {
     var msg = lowAccText;
@@ -208,7 +208,10 @@ function flankerFeedback(data) {
     var msg = highAccText;
   }
 
-  $("#query").html(msg + "<br><br>Press &larr; or &rarr; to continue.");
+  $("#query").html(
+    "You can take a rest now. Remember to respond as quickly and correctly as possible.<br><br>" +
+    msg + "<br><br>Press &larr; or &rarr; to continue."
+  );
 
   return waitLeftOrRight().then(function() {
     $("#query").html("");
@@ -273,8 +276,8 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    return runFlankerBlock(0, 0, 20);
-    // return runFlankerBlock(0, 0, 2);
+    // return runFlankerBlock(0, 0, 20);
+    return runFlankerBlock(0, 0, 2);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
     $("#query").html("Now that the training is over, the test will begin<br><br>"+
@@ -282,8 +285,8 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    return runFlankerBlocks(4, 32, 1);
-    // return runFlankerBlocks(4, 2, 1);
+    // return runFlankerBlocks(4, 32, 1);
+    return runFlankerBlocks(4, 2, 1);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
 
