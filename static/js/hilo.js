@@ -294,7 +294,9 @@ function hiloFeedback(data) {
     $(hiloEls.feedback).show(0);
     $(hiloEls.feedback).html(data.Correct ? correctImg : wrongImg);
     promiseTimeout(hiloConst.FEEDBACK_TIME).then(function () {
-      $(hiloEls.feedback).html(data.Correct ? feedbackCorrect : feedbackWrong);
+      $(hiloEls.feedback).html(
+        "<span style=''>" + (data.Correct ? feedbackCorrect : feedbackWrong) + "</span>"
+      );
       return promiseTimeout(hiloConst.FEEDBACK_TIME);
     }).then(function() {
       $(hiloEls.feedback).html("");
@@ -458,7 +460,7 @@ function HiLoExperiment() {
     "lower or higher than the numbered card; the mystery card's value will never "+
     "be equal to the numbered card.<br>Press &larr; (left), if you think the mystery card "+
     "is lower than the numbered card, or &rarr; (right), if you think the mystery card "+
-    "is higher than the numbered card.<br><br>After"+
+    "is higher than the numbered card.<br><br>After "+
     "your response, the real value of the mystery card will be revealed."+
     "Please respond as quickly and accurately as possible.<br><br>"+
     "<span class='mini-card'>9</span> <span class='mini-card'>?</span><br>\
@@ -493,8 +495,8 @@ function HiLoExperiment() {
     $(hiloEls.feedback).addClass("vertical-center");
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(1, 9, 0);
-    // return hiloBlocks(1, 1, 0);
+    // return hiloBlocks(1, 9, 0);
+    return hiloBlocks(1, 1, 0);
   }).then(function(data) {
     console.log("I got to the other side of the promise");
     expData = expData.concat(data);
@@ -507,8 +509,8 @@ function HiLoExperiment() {
   }).then(function() {
     $(hiloEls.feedback).html("");
     hideAll(hiloEls);
-    return hiloBlocks(6, 18, 1);
-    // return hiloBlocks(2, 1, 1);
+    // return hiloBlocks(6, 18, 1);
+    return hiloBlocks(2, 1, 1);
   }).then(function(data) {
 
     console.log("finished all blocks");

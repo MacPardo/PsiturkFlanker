@@ -125,9 +125,11 @@ h1 {
   max-width: 500px;
   margin: 0 auto;
   margin-top: 80px;
+  font-size: 24px;
 }
 #hilo-feedback.vertical-center {
   margin: 0;
+  font-size: 30px;
 }
 .vertical-center {
   position: absolute;
