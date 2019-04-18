@@ -1,6 +1,42 @@
-<h1>Here are all your users in the database</h1>
+<!DOCTYPE html>
+<thead>
+	<style>
+		table {
+			border-collapse: collapse;
+		}
+		td {
+			border: 1px solid black;
+			padding: 4px;
+		}
+	</style>
+</thead>
+<tbody>
 
-{% for person in participants: %}
-	<a href="/view_data_worker/{{ person.uniqueid }}">{{ person.uniqueid }}</a> &nbsp; {{ person.workerid }} &nbsp; {{ person.ipaddress }} <br />
-
-{% endfor %}
+	
+	<h1>Here are all your users in the database</h1>
+	
+	<table>
+		<thead>
+			<th>Unique ID</th>
+			<th>Worker ID</th>
+			<th>Begin HIT Time</th>
+			<th>End HIT Time</th>
+		</thead>
+	{% for person in participants: %}
+		<tr>
+			<td>
+					<a href="/view_data_worker/{{ person.uniqueid }}">{{ person.uniqueid }}</a>
+			</td>
+			<td>
+					{{ person.workerid }}
+			</td>
+			<td>
+					{{ person.beginhit }}
+			</td>
+			<td>
+				{{ person.endhit }}
+			</td>
+		</tr>
+	{% endfor %}
+	</table>
+</tbody>

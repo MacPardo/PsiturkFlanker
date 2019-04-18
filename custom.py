@@ -72,7 +72,7 @@ def list_my_data():
 
 @custom_code.route('/view_data_worker/<page_id>')
 def show_worker_data(page_id):
-    user = Participant.query.filter_by(uniqueid = page_id).all()
+    user = Participant.query.filter_by(uniqueid = page_id).order_by("endhit").all()
     print "The user I got is"
     print user
 

@@ -1,16 +1,16 @@
 [HIT Configuration]
-title = Stroop task
-description = Judge the color of a series of words.
-amt_keywords = Perception, Psychology
+title = Psychology research about Obsessive-Compulsive symptoms
+description = Answer questionnaires and respond to two different Psychological Tasks
+amt_keywords = Psychology, Cognition, Experiment, Anxiety, OCD, Uncertainty, Obsessive Compulsive, Performance Monitoring
 lifetime = 24
 us_only = true
-approve_requirement = 95
-number_hits_approved = 0
+approve_requirement = 96
+number_hits_approved = 1000
 require_master_workers = false
-contact_email_on_error = youremail@gmail.com
-ad_group = Default psiTurk Stroop Example
-psiturk_keywords = stroop
-organization_name = New Great University
+contact_email_on_error = pesquisaiu.ufrgs@gmail.com
+ad_group = Single OCD tasks research
+psiturk_keywords = Flanker, HiLo, Uncertainty, Performance Monitoring
+organization_name = Universidade Federal do Rio Grande do Sul
 browser_exclude_rule = MSIE, mobile, tablet
 allow_repeats = false
 

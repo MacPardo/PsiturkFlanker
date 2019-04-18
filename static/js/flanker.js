@@ -278,8 +278,8 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    // return runFlankerBlock(0, 0, 20);
-    return runFlankerBlock(0, 0, 2);
+    return runFlankerBlock(0, 0, 20);
+    // return runFlankerBlock(0, 0, 2);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
     $("#query").html("Now that the training is over, the test will begin<br><br>"+
@@ -287,8 +287,8 @@ var FlankerExperiment = function() {
     return waitLeftOrRight();
   }).then(function() {
     $("#query").html("");
-    // return runFlankerBlocks(4, 32, 1);
-    return runFlankerBlocks(4, 2, 1);
+    return runFlankerBlocks(4, 32, 1);
+    // return runFlankerBlocks(4, 2, 1);
   }).then(function(data) {
     experimentData = experimentData.concat(data);
 
