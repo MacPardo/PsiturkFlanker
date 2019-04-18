@@ -133,18 +133,24 @@ function showDataReview() {
  ******************/
 $(window).load(function() {
 
-  var promiseList = [
+  var formList = [
     RunForm.bind(this, "exp/phqGad.html", "phqgad"),
     RunForm.bind(this, "exp/demographic.html", "demographic"),
     RunForm.bind(this, "exp/YBOCS.html", "ybocs"),
     RunForm.bind(this, "exp/IUS-12.html", "ius12"),
-    RunForm.bind(this, "exp/OCI-R.html", "ocir"),
+    RunForm.bind(this, "exp/OCI-R.html", "ocir")
+  ];
+  formList = _.shuffle(formList);
+  
+  var expList = [
     FlankerExperiment,
     HiLoExperiment
   ];
-  promiseList = _.shuffle(promiseList);
+  expList = _.shuffle(expList);
 
-  execPromiseList(promiseList).then(function() {
+  execPromiseList(formList).then(function() {
+    return execPromiseList(expList);
+  }).then(function() {
     EndExperiment();
   });
 
