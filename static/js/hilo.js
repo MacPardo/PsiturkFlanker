@@ -501,6 +501,7 @@ function HiLoExperiment() {
     "For each correct answer, you win 100 points. For each wrong anwer, you lose 100 points.<br><br>" +
     "First you will take some practice trials<br>"+
     "When the practice block is over, the real task will begin<br><br>"+ 
+    "Once the task begins, each stimuli will remain on the screen for a limited period of time, so please pay attention as you will have a short time to respond.<br><br>"+
     "Press &larr; or &rarr; to begin the task.";
 
   psiTurk.showPage("exp/hiloStage.html");

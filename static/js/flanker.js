@@ -241,6 +241,7 @@ var FlankerExperiment = function() {
     "The incongruent condition would be:<br>"+
     "<span style='font-size: 36px;'>&lt;&lt;&gt;&lt;&lt;</span><br>"+
     "In this trial the right answer is to press &rarr; (right)<br><br>"+
+    "Once the task begins, each stimuli will remain on the screen for a very short period of time, so please pay attention as you will have to respond really quickly.<br><br>"+
     "Press &larr; or &rarr; to continue.";
   var exampleText = "The congruent condition would be:<br>"+
     "<span style='font-size: 36px;'>&lt;&lt;&lt;&lt;&lt;</span><br>"+
