@@ -58,13 +58,6 @@ def my_password_protected_route():
 # @myauth.requires_auth
 def list_my_data():
         users = Participant.query.all()
-        print "users:"
-        print users
-        for user in users:
-            print "user is"
-            print user.uniqueid
-            if isinstance(user, Participant):
-                print "user is instance"
 	try:
 		return render_template('list.html', participants=users)
 	except TemplateNotFound:
@@ -73,8 +66,6 @@ def list_my_data():
 @custom_code.route('/view_data_worker/<page_id>')
 def show_worker_data(page_id):
     user = Participant.query.filter_by(uniqueid = page_id).order_by("endhit").all()
-    print "The user I got is"
-    print user
 
     try:
         return render_template('listComplete.html', participants=user)
